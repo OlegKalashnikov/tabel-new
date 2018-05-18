@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Schedule;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ScheduleController extends Controller
+{
+    public function showList(){
+        $user_id = Auth::user()->id;
+        $data_individuallies = DB::table('data_individuallies')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
+        $data_medicall_staffs = DB::table('data_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
+        $data_not_medicall_staffs = DB::table('data_not_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
+        return view('schedule.schedule', [
+            'data_individuallies' => $data_individuallies,
+            'data_medicall_staffs' => $data_medicall_staffs,
+            'data_not_medicall_staffs' => $data_not_medicall_staffs,
+        ]);
+    }
+
+    /**
+     * @param $department_id
+     * @param $month
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function show($department_id, $month){
+        $user_id = Auth::user()->id;
+        $date = Carbon::create(null, $month);
+        $coundDay = Carbon::create(null, $month)->daysInMonth;
+        $tmp_data = Schedule::where('user_id', $user_id)->where('department_id', $department_id)->whereBetween('date',[$date->firstOfMonth()->format('Y-m-d'), $date->lastOfMonth()->format('Y-m-d') ])->get();
+        foreach($tmp_data as $value){
+            $data_schedules[$value->my_employee_id][$value->date][] = $value->start_day;
+            $data_schedules[$value->my_employee_id][$value->date][] = $value->end_day;
+        }
+        return view('schedule.show', [
+            'data_schedules' => $data_schedules,
+            'department_id' => $department_id,
+            'count_day' => $coundDay
+        ]);
+    }
+
+    public function ajax(Request $request){
+        $user_id = Auth::user()->id;
+        $ajax = Schedule::where('user_id', $user_id)->where('my_employee_id', $request->my_employee_id)->where('date', $request->date)->get();
+
+        if($request->field == 'start_day'){
+            foreach($ajax as $update){
+                $update->update([
+                    'start_day' => $request->value,
+                ]);
+            }
+        }elseif($request->field == 'end_day'){
+            foreach($ajax as $update){
+                $update->update([
+                    'start_day' => $request->value,
+                ]);
+            }
+        }
+    }
+
+}
