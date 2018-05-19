@@ -28,7 +28,7 @@
                 <li> <a class="waves-effect waves-dark" href="{{route('dismissal')}}" aria-expanded="false"><i class="mdi mdi-delete-forever"></i><span class="hide-menu">Увольнения</span></a></li>
                 <li class="nav-devider"></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('schedule')}}" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">График</span></a></li>
-                <li> <a class="waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-table-large"></i><span class="hide-menu">Табель</span></a></li>
+                <li> <a class="waves-effect waves-dark" href="{{route('timetable')}}" aria-expanded="false"><i class="mdi mdi-table-large"></i><span class="hide-menu">Табель</span></a></li>
                 <li class="nav-devider"></li>
                 <li> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-printer"></i><span class="hide-menu">Печатные формы</span></a>
                     <ul aria-expanded="false" class="collapse">

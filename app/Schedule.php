@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class Schedule extends Model
 {
     protected $guarded = [];
-    public $timestamps = FALSE;
+    //public $timestamps = FALSE;
 
     /**
      * @param $department_id
@@ -49,10 +49,16 @@ class Schedule extends Model
         return Employee::where('id', $tmp_id)->value('employee');
     }
 
+    /**
+     * @param $my_employee_id
+     * @return mixed
+     */
     public static function schedule_my_employee_position($my_employee_id){
         $user_id = Auth::user()->id;
         $tmp_id = MyEmployee::where('user_id', $user_id)->where('id',$my_employee_id)->value('position_id');
         return Position::where('id', $tmp_id)->value('position');
     }
+
+
 
 }

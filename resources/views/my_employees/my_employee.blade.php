@@ -34,7 +34,7 @@
                             </div>
                         </div>
                         <a href="{{route('my.employee.store.chart')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать график</a>
-                        <a href="avascript:void(0)" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать табель</a>
+                        <a href="{{route('my.employee.store.report.card')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать табель</a>
                     </div>
                     <div class="table-responsive m-t-40">
                         <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">

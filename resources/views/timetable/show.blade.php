@@ -6,10 +6,10 @@
     <!-- ============================================================== -->
     <div class="row page-titles">
         <div class="col-md-9 col-8 align-self-center">
-            <h3 class="text-themecolor">Список графиков</h3>
+            <h3 class="text-themecolor">Список табелей</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Главная</a></li>
-                <li class="breadcrumb-item active">Графики</li>
+                <li class="breadcrumb-item active">Табель</li>
             </ol>
         </div>
     </div>
@@ -22,30 +22,33 @@
                 <div class="card-body">
                     <h4 class="card-title">{{\App\Schedule::department_name($department_id)}}</h4>
                     <h6 class="card-subtitle">
-                        <a href="{{route('schedule')}}" class="btn btn-outline-success"><i class="fa fa-arrow-left"></i> Назад</a>
+                        <a href="{{route('timetable')}}" class="btn btn-outline-success"><i class="fa fa-arrow-left"></i> Назад</a>
                         <a href="" class="btn btn-outline-success"><i class="fa fa-print"></i> Распечатать</a>
                     </h6>
                     <div class="table-responsive">
                         <table id="schedules" class="table editable-table table-bordered table-striped m-b-0">
                             <thead>
                             <tr>
-                                <th rowspan="3">Сотрудник</th>
-                                <th rowspan="3">Должность</th>
-                                <th rowspan="3">Месячная норма</th>
-                                <th rowspan="3">Продолжительность рабочей смены</th>
-                                <th colspan="5">Числа месяца</th>
-
+                                <th rowspan="2">Сотрудник</th>
+                                <th rowspan="2">Должность</th>
+                                <th colspan="{{$count_day}}">Отметки о явках и неявках на работу по числам месяца</th>
+                                <th colspan="7">Итого отработано за месяц</th>
+                                <th colspan="3">Совмещения</th>
                             </tr>
                             <tr>
                                 @for($ptr=1; $ptr<=$count_day; $ptr++ )
-                                    <th colspan="2">{{$ptr}}</th>
+                                    <th>{{$ptr}}</th>
                                 @endfor
-                            </tr>
-                            <tr>
-                                @for($ptr=1; $ptr<=$count_day; $ptr++ )
-                                    <th>Начало рабочего дня</th>
-                                    <th>Конец рабочего дня</th>
-                                @endfor
+                                <th>Дни явок</th>
+                                <th>Отработано часов</th>
+                                <th>Ночные</th>
+                                <th>Ночные ургентные</th>
+                                <th>Выходные</th>
+                                <th>Праздничные</th>
+                                <th>Вредность</th>
+                                <th>%</th>
+                                <th>Отработано часов</th>
+                                <th>Период работы</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -53,12 +56,19 @@
                                     <tr>
                                         <td>{{\App\Schedule::schedule_my_employee($key)}}</td>
                                         <td>{{\App\Schedule::schedule_my_employee_position($key)}}</td>
-                                        <td>{{$data_schedules[$key][$first_day][2]}}</td>
-                                        <td>{{$data_schedules[$key][$first_day][3]}}</td>
                                             @foreach($data_schedules[$key] as $date => $value)
-                                                <td class="edit start_day {{$date}} {{$key}}">{{$value[0]}}</td>
-                                                <td class="edit end_day {{$date}} {{$key}}">{{$value[1]}}</td>
+                                                <td class="edit number_of_hours {{$date}} {{$key}}">{{$value[1]}}</td>
                                             @endforeach
+                                        <td>{{\App\Timetable::quantity($key, $department_id, $month)}}</td>
+                                        <td>{{\App\Timetable::worked_out($key, $department_id, $month)}}</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>{{\App\Timetable::combination($key, $month, 1)}}</td>
+                                        <td>{{\App\Timetable::combination($key, $month, 2)}}</td>
+                                        <td>{{\App\Timetable::combination($key, $month, 3)}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -111,7 +121,7 @@
                 $.ajax({
                     type: "POST",
                     //в файл update_cell.php
-                    url:"{{route('schedule.update.ajax')}}",
+                    url:"{{route('timetable.update.ajax')}}",
                     //создаём строку для отправки запроса
                     //value = введенное значение
                     //id = номер строки

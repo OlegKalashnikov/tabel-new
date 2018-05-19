@@ -15,6 +15,7 @@ use App\MyEmployee;
 use App\NoShows;
 use App\Position;
 use App\Schedule;
+use App\Timetable;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -259,6 +260,8 @@ class MyEmployeeController extends Controller
                     $data->user_id = $user_id; //id табельщика
                     $data->my_employee_id = $insert->my_employee_id; //id сотрудника
                     $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                    $data->clock_rate = $insert->clock_rate;//месячная норма сотрудника
+                    $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
                     /*====================================================================================*/
                     /*
                      * Проверка на рабочие дни и выходные
@@ -371,6 +374,8 @@ class MyEmployeeController extends Controller
                     $data->user_id = $user_id; //id табельщика
                     $data->my_employee_id = $insert->my_employee_id; //id сотрудника
                     $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                    $data->clock_rate = $insert->clock_rate;//месячная норма сотрудника
+                    $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
                     /*====================================================================================*/
                     /*
                      * Проверка на рабочие дни и выходные
@@ -491,6 +496,8 @@ class MyEmployeeController extends Controller
                     foreach($inserts as $insert){//рабочие даты текущего сотрудника
                         $data->my_employee_id = $insert->my_employee_id; //id сотрудника
                         $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                        $data->clock_rate = $insert->clock_rate;//месячная норма сотрудника
+                        $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
                         if($insert->date == $first_day_for->format('Y-m-d')){
                             $data->start_day = $insert->start_day;
                             $data->end_day = $insert->end_day;
@@ -511,4 +518,257 @@ class MyEmployeeController extends Controller
 
         return redirect()->route('my.employee');
     }
+
+    public function storeReportCard(){
+        $user_id = Auth::user()->id;
+        $month = Carbon::now()->format('m');
+        $date = Carbon::now();
+        $count_day = $date->daysInMonth;
+        $first_day = $date->firstOfMonth()->format('Y-m-d');
+        $last_day = $date->lastOfMonth()->format('Y-m-d');
+        $data_medicall_staff = DataMedicallStaff::where('user_id', $user_id)->where('month', $month)->get(); //данные по мед работникам
+        $data_not_medicall_staff = DataNotMedicallStaff::where('user_id', $user_id)->where('month', $month)->get(); //данные по прочим работникам
+        $data_individually = DataIndividually::where('user_id', $user_id)->where('date', '>=', $first_day)->where('date', '<=', $last_day)->get(); //данные по индивидуальным графикам рабаты
+        $holidays = Holiday::where('date', '>=', $first_day)->where('date', '<=', $last_day)->get(); //праздничные и предпраздничные дни
+        //$combinations = Combination::where('user_id', $user_id)->where('start', '<=', $last_day)->where('end', '>=', $first_day)->get();//совмещения
+        $dismissals = Dismissal::where('user_id', $user_id)->where('date', '>=', $first_day)->where('date', '<=', $last_day)->get();//увольнения
+        $no_shows = NoShows::where('user_id', $user_id)->where('start', '<=', $last_day)->where('end', '>=', $first_day)->get();//неявки
+
+        if(isset($data_not_medicall_staff[0]->id)){ //если есть у данного пользователя нет медперсонал
+//            dump('Не медперсонал');
+            foreach($data_not_medicall_staff as $insert){//обходим массив сотрудников для которых формируем график
+                $first_day_for = Carbon::now()->firstOfMonth();//первый день текущего месяца
+                $ptr_sick_leave = 0; //количество дней больничного листа во время отпуска
+                for($ptr = 0; $ptr < $count_day; $ptr++){//обходим весь месяц по дням для конкретного сотрудника
+                    $data = new Timetable(); //создаем объект типа Табель
+                    $data->user_id = $user_id; //id табельщика
+                    $data->my_employee_id = $insert->my_employee_id; //id сотрудника
+                    $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                    $data->number_of_days = $insert->number_of_days;//количество рабочих дней
+                    /*====================================================================================*/
+                    /*
+                     * Проверка на рабочие дни и выходные
+                     * */
+                    if(!$first_day_for->isWeekend()){//если не суббота или воскресенье
+                        $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
+                        $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                    }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
+                        $data->number_of_hours = 0;
+                        $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                    }
+                    /*=======================================================================================*/
+                    /*
+                     * Проверка на предпраздничные дни и праздники
+                     * */
+                    foreach($holidays as $holiday){
+                        if($holiday->type == 1 && $holiday->date == $first_day_for->format('Y-m-d')){//предпраздничный, сокращенный день
+                            $data->number_of_hours = MyEmployee::timeHolidays($insert->number_of_hours, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
+                            $data->number_of_hours = 0;
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }
+                    }
+                    /*=========================================================================================*/
+                    /*
+                     * Проверка на неявки текущего сотрудника на работу
+                     * */
+                    foreach($no_shows as $no_show){
+                        if($no_show->default_type_id == 7 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//командировка
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 6 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//специализация
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 5 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//ученический отпуск
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 4 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//без содержания
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 3 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//прогул
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 2  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){ //отпуск
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
+                            $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
+                            if(isset($employee[0]->id)){
+                                $ptr_sick_leave++;
+                            }
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date = $first_day_for->format('Y-m-d');
+                        }
+
+                    }
+                    /*=========================================================================================*/
+                    /*
+                     * Проверка на увольнения
+                     * */
+                    foreach($dismissals as $dismissal){
+                        if($dismissal->my_employee_id == $insert->my_employee_id && $dismissal->date <= $first_day_for->format('Y-m-d')){
+                            $data->number_of_hours = 'Уволе';
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }
+                    }
+                    $data->save();//сохраняем данные в БД
+                    $first_day_for->addDay(); //прибавляем один день
+                }
+                /*
+                 * Если есть совпадения периодов б/л с отпуском.
+                 * Продлеваем отпуск на кол-во дней б/л
+                 * */
+                if(!empty($ptr_sick_leave)){
+                    $tmp_date = explode('-',$end_date);
+                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                        $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
+                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                        $tmp[0]->save();
+                        $tmp_date_for->addDay();
+                    }
+                }
+            }
+        }
+
+        if(isset($data_medicall_staff[0]->id)){//если есть у данного пользователя есть медперсонал
+//            dump('Медперсонал');
+            foreach($data_medicall_staff as $insert){//обходим массив сотрудников для которых формируем график
+                $first_day_for = Carbon::now()->firstOfMonth();//первый день текущего месяца
+                $ptr_sick_leave = 0; //количество дней больничного листа во время отпуска
+                for($ptr=0; $ptr<$count_day; $ptr++){//обходим весь месяц по дням для конкретного сотрудника
+                    $data = new Timetable(); //создаем объект типа Табель
+                    $data->user_id = $user_id; //id табельщика
+                    $data->my_employee_id = $insert->my_employee_id; //id сотрудника
+                    $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                    $data->number_of_days = $insert->number_of_days;//количество рабочих дней
+                    /*====================================================================================*/
+                    /*
+                     * Проверка на рабочие дни и выходные
+                     * */
+                    if(!$first_day_for->isWeekend()){//если не суббота или воскресенье
+                        $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
+                        $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                    }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
+                        $data->number_of_hours = 0; //рабочее время по 0
+                        $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                    }
+                    if(isset($insert->date_weekday) && $insert->date_weekday == $first_day_for->format('Y-m-d')){
+                        $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
+                        $data->date = $insert->date_weekday; //дата рабочего выходного
+                    }
+                    /*=======================================================================================*/
+                    /*
+                     * Проверка на предпраздничные дни и праздники
+                     * */
+                    foreach($holidays as $holiday){
+                        if($holiday->type == 1 && $holiday->date == $first_day_for->format('Y-m-d')){//предпраздничный, сокращенный день
+                            $data->number_of_hours = MyEmployee::timeHolidays($insert->number_of_hours, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
+                            $data->number_of_hours = 0;
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }
+                    }
+                    /*=========================================================================================*/
+                    /*
+                     * Проверка на неявки текущего сотрудника на работу
+                     * */
+                    foreach($no_shows as $no_show){
+                        if($no_show->default_type_id == 7 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//командировка
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 6 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//специализация
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 5 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//ученический отпуск
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 4 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//без содержания
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 3 && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){//прогул
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 2  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){ //отпуск
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
+                            $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
+                            if(isset($employee[0]->id)){
+                                $ptr_sick_leave++;
+                            }
+                            $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date = $first_day_for->format('Y-m-d');
+                        }
+
+                    }
+                    /*=========================================================================================*/
+                    /*
+                     * Проверка на увольнения
+                     * */
+                    foreach($dismissals as $dismissal){
+                        if($dismissal->my_employee_id == $insert->my_employee_id && $dismissal->date <= $first_day_for->format('Y-m-d')){
+                            $data->number_of_hours = 'Уволе';
+                            $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                        }
+                    }
+                    $data->save();//сохраняем данные в БД
+                    $first_day_for->addDay(); //прибавляем один день
+                }
+                /*
+                 * Если есть совпадения периодов б/л с отпуском.
+                 * Продлеваем отпуск на кол-во дней б/л
+                 * */
+                if(!empty($ptr_sick_leave)){
+                    $tmp_date = explode('-',$end_date);
+                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                        $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
+                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                        $tmp[0]->save();
+                        $tmp_date_for->addDay();
+                    }
+                }
+            }
+        }
+
+        if(isset($data_individually[0]->id)) {//если есть у данного пользователя есть есть сведения по конктетном сотруднику
+//            dump('Индивидуальный график');
+            $count_individually_employees = DataIndividually::where('user_id', $user_id)->where('date', '>=', $first_day)->where('date', '<=', $last_day)->get()->groupBy('my_employee_id');//количество сотрудников по индивидуальным графикам
+            foreach($count_individually_employees as $key => $inserts){
+//                dump(count($inserts));
+                $first_day_for = Carbon::now()->firstOfMonth();//первый день текущего месяца
+                $ptr_sick_leave = 0; //количество дней больничного листа во время отпуска
+                for($ptr = 0; $ptr < $count_day; $ptr++){//обходим текущий месяц
+                    $data = new Timetable(); //создаем объект типа Табель
+                    $data->user_id = $user_id; //id табельщика
+                    foreach($inserts as $insert){//рабочие даты текущего сотрудника
+                        $data->my_employee_id = $insert->my_employee_id; //id сотрудника
+                        $data->department_id = $insert->department_id;//id подразделения текущего сотрудника
+                        $data->number_of_days = $insert->number_of_days;//количество рабочих дней
+                        if($insert->date == $first_day_for->format('Y-m-d')){
+                            $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
+                            $data->date = $insert->date;
+                            break;
+                        }else{
+                            $data->number_of_hours = 0;
+                            $data->date = $first_day_for->format('Y-m-d');
+                            continue;
+                        }
+                    }
+                    $data->save();
+                    $first_day_for->addDay();
+                }
+            }
+        }
+
+        return redirect()->route('my.employee');
+    }
+
 }

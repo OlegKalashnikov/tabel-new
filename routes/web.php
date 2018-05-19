@@ -79,6 +79,8 @@ Route::group(['middleware' => 'auth'], function (){
     Route::post('/my_employees/create/not_medicall_staff_create', 'MyEmployeeController@storeNotMedicallStaf')->name('my.employee.store.notmedicalstaff');
     /* Сформировать график */
     Route::get('/my_employees/chart', 'MyEmployeeController@storeChart')->name('my.employee.store.chart');
+    /* Сформировать табель*/
+    Route::get('/my_employees/report_card', 'MyEmployeeController@storeReportCard')->name('my.employee.store.report.card');
     /*===============================================================================================================*/
     /* No-shows (неявки) */
     Route::get('no-shows', 'NoShowsController@show')->name('no.shows');
@@ -105,7 +107,11 @@ Route::group(['middleware' => 'auth'], function (){
     Route::get('/schedule', 'ScheduleController@showList')->name('schedule');
     Route::get('/schedule/{department}/{month}/show', 'ScheduleController@show')->name('schedule.show');
     Route::post('/schedules/ajax_update', 'ScheduleController@ajax')->name('schedule.update.ajax');
-
+    /*================================================================================================================*/
+    /* Timetable (табель)*/
+    Route::get('/timetable', 'TimetableController@showList')->name('timetable');
+    Route::get('/timetable/{department}/{month}/show', 'TimetableController@show')->name('timetable.show');
+    Route::post('/timetable/ajax_update', 'TimetableController@ajax')->name('timetable.update.ajax');
 
 });
 
