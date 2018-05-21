@@ -37,7 +37,7 @@
                             </tr>
                             <tr>
                                 @for($ptr=1; $ptr<=$count_day; $ptr++ )
-                                    <th>{{$ptr}}</th>
+                                    <th @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$ptr}}</th>
                                 @endfor
                                 <th>Дни явок</th>
                                 <th>Отработано часов</th>
@@ -56,8 +56,10 @@
                                     <tr>
                                         <td>{{\App\Schedule::schedule_my_employee($key)}}</td>
                                         <td>{{\App\Schedule::schedule_my_employee_position($key)}}</td>
+                                            <?php $ptr = 1;?>
                                             @foreach($data_schedules[$key] as $date => $value)
-                                                <td class="edit number_of_hours {{$date}} {{$key}}">{{$value[1]}}</td>
+                                                <td class="edit number_of_hours {{$date}} {{$key}}" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$value[1]}}</td>
+                                                <?php $ptr++;?>
                                             @endforeach
                                         <td>{{\App\Timetable::quantity($key, $department_id, $month)}}</td>
                                         <td>{{\App\Timetable::worked_out($key, $department_id, $month)}}</td>

@@ -60,6 +60,12 @@ class Timetable extends Model
         return sprintf('%02d:%02d', ($tmp / 3600), ($tmp / 60 % 60));
     }
 
+    /**
+     * @param $my_employee_id
+     * @param $month
+     * @param $td
+     * @return int|string
+     */
     public static function combination($my_employee_id, $month, $td){
         $user_id = Auth::user()->id;
         $date = Carbon::create(null,$month,01);
@@ -91,6 +97,20 @@ class Timetable extends Model
             }
         }
         return $tmp_string;
+    }
+
+    /**
+     * @param $month
+     * @param $day
+     * @return bool
+     */
+    public static function ifWeekday($month, $day){
+        $tmp_day = Carbon::create(null, $month, $day);
+        if($tmp_day->isWeekend()){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 
 }

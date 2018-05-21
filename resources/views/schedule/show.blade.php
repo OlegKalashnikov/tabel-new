@@ -38,7 +38,7 @@
                             </tr>
                             <tr>
                                 @for($ptr=1; $ptr<=$count_day; $ptr++ )
-                                    <th colspan="2">{{$ptr}}</th>
+                                    <th colspan="2" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$ptr}}</th>
                                 @endfor
                             </tr>
                             <tr>
@@ -55,9 +55,11 @@
                                         <td>{{\App\Schedule::schedule_my_employee_position($key)}}</td>
                                         <td>{{$data_schedules[$key][$first_day][2]}}</td>
                                         <td>{{$data_schedules[$key][$first_day][3]}}</td>
+                                            <?php $ptr = 1;?>
                                             @foreach($data_schedules[$key] as $date => $value)
-                                                <td class="edit start_day {{$date}} {{$key}}">{{$value[0]}}</td>
-                                                <td class="edit end_day {{$date}} {{$key}}">{{$value[1]}}</td>
+                                                <td class="edit start_day {{$date}} {{$key}}" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$value[0]}}</td>
+                                                <td class="edit end_day {{$date}} {{$key}}" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$value[1]}}</td>
+                                            <?php $ptr++;?>
                                             @endforeach
                                     </tr>
                                 @endforeach

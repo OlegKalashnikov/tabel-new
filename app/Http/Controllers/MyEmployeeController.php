@@ -658,9 +658,8 @@ class MyEmployeeController extends Controller
                         $tmp_date = explode('-',$end_date_otpusk);
                         $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
                         for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
-                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp = Timetable::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
                             $tmp[0]->date = $tmp_date_for->format('Y-m-d');
                             $tmp[0]->save();
                             $tmp_date_for->addDay();
@@ -670,9 +669,8 @@ class MyEmployeeController extends Controller
                         $tmp_date = explode('-',$end_date);
                         $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
                         for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
-                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp = Timetable::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
                             $tmp[0]->date = $tmp_date_for->format('Y-m-d');
                             $tmp[0]->save();
                             $tmp_date_for->addDay();
@@ -834,7 +832,7 @@ class MyEmployeeController extends Controller
             }
         }
 
-        return redirect()->route('my.employee');
+        //return redirect()->route('my.employee');
     }
 
 }

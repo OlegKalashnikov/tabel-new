@@ -46,6 +46,7 @@ class ScheduleController extends Controller
             'department_id' => $department_id,
             'count_day' => $coundDay,
             'first_day' => Carbon::create(null, $month)->format('Y-m-d'),
+            'month' => $month,
         ]);
     }
 
