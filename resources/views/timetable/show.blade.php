@@ -23,7 +23,7 @@
                     <h4 class="card-title">{{\App\Schedule::department_name($department_id)}}</h4>
                     <h6 class="card-subtitle">
                         <a href="{{route('timetable')}}" class="btn btn-outline-success"><i class="fa fa-arrow-left"></i> Назад</a>
-                        <a href="" class="btn btn-outline-success"><i class="fa fa-print"></i> Распечатать</a>
+                        <a href="{{route('print.timetable', [$department_id, $month])}}" class="btn btn-outline-success"><i class="fa fa-print"></i> Распечатать</a>
                     </h6>
                     <div class="table-responsive">
                         <table id="schedules" class="table editable-table table-bordered table-striped m-b-0">

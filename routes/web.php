@@ -112,6 +112,7 @@ Route::group(['middleware' => 'auth'], function (){
     Route::get('/timetable', 'TimetableController@showList')->name('timetable');
     Route::get('/timetable/{department}/{month}/show', 'TimetableController@show')->name('timetable.show');
     Route::post('/timetable/ajax_update', 'TimetableController@ajax')->name('timetable.update.ajax');
+    Route::get('/timetable/{department}/{month}/print', 'PrintController@printTimetable')->name('print.timetable');
 
 });
 
