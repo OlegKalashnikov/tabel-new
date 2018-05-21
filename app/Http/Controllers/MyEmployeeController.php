@@ -271,8 +271,8 @@ class MyEmployeeController extends Controller
                         $data->end_day = $insert->end_day; //конец рабочего дня текущего сотрудника
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
-                        $data->start_day = 0; //рабочее время по 0
-                        $data->end_day = 0; //рабочее время по 0
+                        $data->start_day = 'В'; //рабочее время по 0
+                        $data->end_day = 'В'; //рабочее время по 0
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }
                     /*=======================================================================================*/
@@ -285,8 +285,8 @@ class MyEmployeeController extends Controller
                             $data->end_day = MyEmployee::timeHolidays($insert->end_day, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
-                            $data->start_day = 0;
-                            $data->end_day = 0;
+                            $data->start_day = 'П';
+                            $data->end_day = 'П';
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }
                     }
@@ -319,6 +319,7 @@ class MyEmployeeController extends Controller
                             $data->start_day = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
                             $data->end_day = DefaultType::where('id', $no_show->default_type_id)->value('reduction');;
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date_otpusk = $first_day_for->format('Y-m-d');
                         }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
                             $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
                             if(isset($employee[0]->id)){
@@ -350,15 +351,30 @@ class MyEmployeeController extends Controller
                  * Продлеваем отпуск на кол-во дней б/л
                  * */
                 if(!empty($ptr_sick_leave)){
-                    $tmp_date = explode('-',$end_date);
-                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
-                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                        $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
-                        $tmp[0]->save();
-                        $tmp_date_for->addDay();
+                    if(isset($end_date_otpusk)){
+                        $tmp_date = explode('-',$end_date_otpusk);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
+                    }else{
+                        $tmp_date = explode('-',$end_date);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
                     }
                 }
             }
@@ -385,8 +401,8 @@ class MyEmployeeController extends Controller
                         $data->end_day = $insert->end_day; //конец рабочего дня текущего сотрудника
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
-                        $data->start_day = 0; //рабочее время по 0
-                        $data->end_day = 0; //рабочее время по 0
+                        $data->start_day = 'В'; //рабочее время по 0
+                        $data->end_day = 'В'; //рабочее время по 0
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }
                     if(isset($insert->date_weekday) && $insert->date_weekday == $first_day_for->format('Y-m-d')){
@@ -404,8 +420,8 @@ class MyEmployeeController extends Controller
                             $data->end_day = MyEmployee::timeHolidays($insert->end_day, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
-                            $data->start_day = 0;
-                            $data->end_day = 0;
+                            $data->start_day = 'П';
+                            $data->end_day = 'П';
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }
                     }
@@ -438,6 +454,7 @@ class MyEmployeeController extends Controller
                             $data->start_day = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
                             $data->end_day = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date_otpusk = $first_day_for->format('Y-m-d');
                         }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
                             $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
                             if(isset($employee[0]->id)){
@@ -469,15 +486,30 @@ class MyEmployeeController extends Controller
                  * Продлеваем отпуск на кол-во дней б/л
                  * */
                 if(!empty($ptr_sick_leave)){
-                    $tmp_date = explode('-',$end_date);
-                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
-                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                        $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
-                        $tmp[0]->save();
-                        $tmp_date_for->addDay();
+                    if(isset($end_date_otpusk)){
+                        $tmp_date = explode('-',$end_date_otpusk);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
+                    }else{
+                        $tmp_date = explode('-',$end_date);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
                     }
                 }
             }
@@ -553,7 +585,7 @@ class MyEmployeeController extends Controller
                         $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
-                        $data->number_of_hours = 0;
+                        $data->number_of_hours = 'В';
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }
                     /*=======================================================================================*/
@@ -565,7 +597,7 @@ class MyEmployeeController extends Controller
                             $data->number_of_hours = MyEmployee::timeHolidays($insert->number_of_hours, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
-                            $data->number_of_hours = 0;
+                            $data->number_of_hours = 'П';
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }
                     }
@@ -592,6 +624,7 @@ class MyEmployeeController extends Controller
                         }elseif($no_show->default_type_id == 2  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){ //отпуск
                             $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date_otpusk = $first_day_for->format('Y-m-d');
                         }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
                             $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
                             if(isset($employee[0]->id)){
@@ -621,14 +654,30 @@ class MyEmployeeController extends Controller
                  * Продлеваем отпуск на кол-во дней б/л
                  * */
                 if(!empty($ptr_sick_leave)){
-                    $tmp_date = explode('-',$end_date);
-                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
-                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                        $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
-                        $tmp[0]->save();
-                        $tmp_date_for->addDay();
+                    if(isset($end_date_otpusk)){
+                        $tmp_date = explode('-',$end_date_otpusk);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
+                    }else{
+                        $tmp_date = explode('-',$end_date);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
                     }
                 }
             }
@@ -653,7 +702,7 @@ class MyEmployeeController extends Controller
                         $data->number_of_hours = $insert->number_of_hours;//продолжительность рабочей смены
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }elseif($first_day_for->isWeekend()){//если суббота или воскресенье
-                        $data->number_of_hours = 0; //рабочее время по 0
+                        $data->number_of_hours = 'В'; //рабочее время по 0
                         $data->date = $first_day_for->format('Y-m-d'); //день месяца
                     }
                     if(isset($insert->date_weekday) && $insert->date_weekday == $first_day_for->format('Y-m-d')){
@@ -669,7 +718,7 @@ class MyEmployeeController extends Controller
                             $data->number_of_hours = MyEmployee::timeHolidays($insert->number_of_hours, MyEmployee::where('id', $insert->my_employee_id)->value('rate')); //сокращение рабочего дня в зависимости от скавки текущего сотрудника
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }elseif($holiday->type == 2 && $holiday->date == $first_day_for->format('Y-m-d')){
-                            $data->number_of_hours = 0;
+                            $data->number_of_hours = 'П';
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
                         }
                     }
@@ -696,6 +745,7 @@ class MyEmployeeController extends Controller
                         }elseif($no_show->default_type_id == 2  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){ //отпуск
                             $data->number_of_hours = DefaultType::where('id', $no_show->default_type_id)->value('reduction');
                             $data->date = $first_day_for->format('Y-m-d'); //день месяца
+                            $end_date_otpusk = $first_day_for->format('Y-m-d');
                         }elseif($no_show->default_type_id == 1  && $no_show->my_employee_id == $insert->my_employee_id && ($no_show->start <= $first_day_for->format('Y-m-d') && $no_show->end >= $first_day_for->format('Y-m-d'))){// б/л
                             $employee = NoShows::where('my_employee_id', $insert->my_employee_id)->where('default_type_id', '=', 2)->where('start', '<=', $first_day_for->format('Y-m-d'))->where('end', '>=', $first_day_for->format('Y-m-d'))->get();
                             if(isset($employee[0]->id)){
@@ -725,14 +775,30 @@ class MyEmployeeController extends Controller
                  * Продлеваем отпуск на кол-во дней б/л
                  * */
                 if(!empty($ptr_sick_leave)){
-                    $tmp_date = explode('-',$end_date);
-                    $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
-                    for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
-                        $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
-                        $tmp[0]->number_of_hours = DefaultType::where('id', 2)->value('reduction');
-                        $tmp[0]->date = $tmp_date_for->format('Y-m-d');
-                        $tmp[0]->save();
-                        $tmp_date_for->addDay();
+                    if(isset($end_date_otpusk)){
+                        $tmp_date = explode('-',$end_date_otpusk);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
+                    }else{
+                        $tmp_date = explode('-',$end_date);
+                        $tmp_date_for = Carbon::create($tmp_date[0], $tmp_date[1], $tmp_date[2]+1);
+                        for($ptr = 0; $ptr < $ptr_sick_leave; $ptr++){
+                            $tmp = Schedule::where('my_employee_id', $insert->my_employee_id)->where('date', $tmp_date_for->format('Y-m-d'))->get();//Находим текущий день и обновляем его
+                            $tmp[0]->start_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->end_day = DefaultType::where('id', 2)->value('reduction');
+                            $tmp[0]->date = $tmp_date_for->format('Y-m-d');
+                            $tmp[0]->save();
+                            $tmp_date_for->addDay();
+//                            dump($tmp_date_for);
+                        }
                     }
                 }
             }
