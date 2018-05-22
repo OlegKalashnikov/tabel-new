@@ -112,7 +112,12 @@
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"><i class="ti-settings"></i> Настройки профиля</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="#"><i class="fa fa-power-off"></i> Выход</a></li>
+                                <li>
+                                    <a href="{{route('logout')}}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Выход</a>
+                                    <form id="logout-form" action="{{route('logout')}}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </li>
                             </ul>
                         </div>
                     </li>

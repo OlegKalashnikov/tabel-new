@@ -45,8 +45,9 @@ class PrintController extends Controller
                 $sheet->cell('AC2', function ($cell){
                     $cell->setValue('Форма по ОКУД');
                 });
+                $sheet->getStyle('AC2:AH2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->mergeCells('AI2:AJ2');
+                $sheet->mergeCells('AI2:AJ2')->setBorder('AI2:AJ2', 'thin');
                 $sheet->cell('AI2', function ($cell){
                     $cell->setValue('504421');
                 });
@@ -64,8 +65,9 @@ class PrintController extends Controller
                 $sheet->cell('AC3', function ($cell){
                     $cell->setValue('Дата');
                 });
+                $sheet->getStyle('AC3:AH3')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->mergeCells('AI3:AJ3');
+                $sheet->mergeCells('AI3:AJ3')->setBorder('AI3:AJ3', 'thin');
                 $sheet->cell('AI3', function ($cell){
                     $cell->setValue('');
                 });
@@ -80,8 +82,9 @@ class PrintController extends Controller
                 $sheet->cell('AC4', function ($cell){
                     $cell->setValue('по ОКПО');
                 });
+                $sheet->getStyle('AC4:AH4')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->mergeCells('AI4:AJ4');
+                $sheet->mergeCells('AI4:AJ4')->setBorder('AI4:AJ4', 'thin');
                 $sheet->cell('AI4', function ($cell){
                     $cell->setValue('');
                 });
@@ -98,7 +101,7 @@ class PrintController extends Controller
                     $cell->setValue('');
                 });
 
-                $sheet->mergeCells('AI5:AJ5');
+                $sheet->mergeCells('AI5:AJ5')->setBorder('AI5:AJ5', 'thin');
                 $sheet->cell('AI5', function ($cell){
                     $cell->setValue('');
                 });
@@ -113,8 +116,9 @@ class PrintController extends Controller
                 $sheet->cell('AC6', function ($cell){
                     $cell->setValue('Номер корректировки');
                 });
+                $sheet->getStyle('AC6:AH6')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->mergeCells('AI6:AJ6');
+                $sheet->mergeCells('AI6:AJ6')->setBorder('AI6:AJ6', 'thin');
                 $sheet->cell('AI6', function ($cell){
                     $cell->setValue('');
                 });
@@ -123,37 +127,43 @@ class PrintController extends Controller
                 $sheet->cell('AA7', function ($cell){
                     $cell->setValue('Дата формирования документа');
                 });
+                $sheet->getStyle('AA7:AH7')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->mergeCells('AI7:AJ7');
+                $sheet->mergeCells('AI7:AJ7')->setBorder('AI7:AJ7', 'thin');
                 $sheet->cell('AI7', function ($cell){
                     $date = Carbon::now()->format('Y-m-d');
                     $cell->setValue("$date");
                 });
                 $sheet->mergeCells('A9:A10');
                 $sheet->cell('A9', function($cell){
-                    $cell->setValue('№п/п');
+                    $cell->setValue('№ п/п');
                 });
+                $sheet->getStyle('A9:A10')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 $sheet->mergeCells('B9:B10');
                 $sheet->cell('B9', function($cell){
                     $cell->setValue('Фамилия, имя, отчество');
                 });
+                $sheet->getStyle('B9:B10')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 $sheet->mergeCells('C9:C10');
                 $sheet->cell('C9', function($cell){
                     $cell->setValue('Должность');
                 });
+                $sheet->getStyle('C9:C10')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
                 $sheet->mergeCells('D9:AH9');
                 $sheet->cell('D9', function ($cell){
                     $cell->setValue("Отметки о явках и неявках на работу по числам месяца");
                 });
+                $sheet->getStyle('D9:AH9')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $sheet->mergeCells('AI9:AO9');
                 $sheet->cell('AI9', function ($cell){
                     $cell->setValue("Итого отработано за месяц");
                 });
+                $sheet->getStyle('AI9:AO9')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $sheet->mergeCells('AP9:AR9');
                 $sheet->cell('AP9', function ($cell){
                     $cell->setValue("Совмещение");
                 });
-
+                $sheet->getStyle('AP9:AR9')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 /**/
                 $sheet->cell('D10', function ($cell){
                     $cell->setValue("1");
@@ -252,33 +262,44 @@ class PrintController extends Controller
                 $sheet->cell('AI10', function ($cell){
                     $cell->setValue("Дни явок");
                 });
+                $sheet->getStyle('AI10')->getAlignment()->setTextRotation(90);
+
                 $sheet->cell('AJ10', function ($cell){
                     $cell->setValue("отработано часов");
                 });
+                $sheet->getStyle('AJ10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AK10', function ($cell){
                     $cell->setValue("ночные");
                 });
+                $sheet->getStyle('AK10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AL10', function ($cell){
                     $cell->setValue("ночные ургентные");
                 });
+                $sheet->getStyle('AL10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AM10', function ($cell){
                     $cell->setValue("выходные");
                 });
+                $sheet->getStyle('AM10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AN10', function ($cell){
                     $cell->setValue("праздничные");
                 });
+                $sheet->getStyle('AN10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AO10', function ($cell){
                     $cell->setValue("вредность");
                 });
+                $sheet->getStyle('AO10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AP10', function ($cell){
                     $cell->setValue("%");
                 });
+                $sheet->getStyle('AP10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AQ10', function ($cell){
                     $cell->setValue("отработано часов");
                 });
+                $sheet->getStyle('AQ10')->getAlignment()->setTextRotation(90);
                 $sheet->cell('AR10', function ($cell){
                     $cell->setValue("период работы");
                 });
+                $sheet->getStyle('AR10')->getAlignment()->setTextRotation(90);
 
 
                 /*Заполнение данными из БД*/
@@ -289,8 +310,69 @@ class PrintController extends Controller
                     $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_days;
                     $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_hours;
                 }
+
+                $style_border = array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style'=>\PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array(
+                                'rgb'=>'696969'
+                            )
+                        )
+                    )
+                );
+
                 $ptr = 1;
                 $cell_ptr = 11; //начало данных
+                $sheet->getColumnDimension('A')->setWidth(5);
+                $sheet->getStyle("A10")->getAlignment()->setWrapText(true);
+                $sheet->getColumnDimension('B')->setWidth(23);
+                $sheet->getColumnDimension('C')->setWidth(23);
+                /**/
+                $sheet->getColumnDimension('D')->setWidth(6);
+                $sheet->getColumnDimension('E')->setWidth(6);
+                $sheet->getColumnDimension('F')->setWidth(6);
+                $sheet->getColumnDimension('G')->setWidth(6);
+                $sheet->getColumnDimension('H')->setWidth(6);
+                $sheet->getColumnDimension('I')->setWidth(6);
+                $sheet->getColumnDimension('J')->setWidth(6);
+                $sheet->getColumnDimension('K')->setWidth(6);
+                $sheet->getColumnDimension('L')->setWidth(6);
+                $sheet->getColumnDimension('M')->setWidth(6);
+                $sheet->getColumnDimension('N')->setWidth(6);
+                $sheet->getColumnDimension('O')->setWidth(6);
+                $sheet->getColumnDimension('P')->setWidth(6);
+                $sheet->getColumnDimension('Q')->setWidth(6);
+                $sheet->getColumnDimension('R')->setWidth(6);
+                $sheet->getColumnDimension('S')->setWidth(6);
+                $sheet->getColumnDimension('T')->setWidth(6);
+                $sheet->getColumnDimension('U')->setWidth(6);
+                $sheet->getColumnDimension('V')->setWidth(6);
+                $sheet->getColumnDimension('W')->setWidth(6);
+                $sheet->getColumnDimension('X')->setWidth(6);
+                $sheet->getColumnDimension('Y')->setWidth(6);
+                $sheet->getColumnDimension('Z')->setWidth(6);
+                $sheet->getColumnDimension('AA')->setWidth(6);
+                $sheet->getColumnDimension('AB')->setWidth(6);
+                $sheet->getColumnDimension('AC')->setWidth(6);
+                $sheet->getColumnDimension('AD')->setWidth(6);
+                $sheet->getColumnDimension('AE')->setWidth(6);
+                $sheet->getColumnDimension('AF')->setWidth(6);
+                $sheet->getColumnDimension('AG')->setWidth(6);
+                $sheet->getColumnDimension('AH')->setWidth(6);
+
+                /**/
+                $sheet->getColumnDimension('AI')->setWidth(5);
+                $sheet->getColumnDimension('AJ')->setWidth(7);
+                $sheet->getColumnDimension('AK')->setWidth(5);
+                $sheet->getColumnDimension('AL')->setWidth(5);
+                $sheet->getColumnDimension('AM')->setWidth(5);
+                $sheet->getColumnDimension('AN')->setWidth(5);
+                $sheet->getColumnDimension('AO')->setWidth(5);
+                $sheet->getColumnDimension('AP')->setWidth(5);
+                $sheet->getColumnDimension('AQ')->setWidth(5);
+                $sheet->getColumnDimension('AR')->setWidth(12);
+                //$sheet->getStyle('A9:AR10')->applyFromArray($style_border);
                 foreach($data_schedules as $key => $data_schedule){
                     $sheet->cell("A$cell_ptr", function ($cell) use($ptr){
                         $cell->setValue("$ptr");
@@ -299,10 +381,12 @@ class PrintController extends Controller
                         $employee = Schedule::schedule_my_employee($key);
                         $cell->setValue("$employee");
                     });
+                    $sheet->getStyle("B$cell_ptr")->getAlignment()->setWrapText(true);
                     $sheet->cell("C$cell_ptr", function ($cell) use($key){
                         $position = Schedule::schedule_my_employee_position($key);
                         $cell->setValue("$position");
                     });
+                    $sheet->getStyle("C$cell_ptr")->getAlignment()->setWrapText(true);
                     $ptr_date = 0;
                     foreach($data_schedules[$key] as $date => $value){
                         $arr_cell = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH'];
@@ -334,11 +418,12 @@ class PrintController extends Controller
                         $combination = Timetable::combination($key, $excel_month, 3);
                         $cell->setValue("$combination");
                     });
+                    $sheet->getStyle("AR$cell_ptr")->getAlignment()->setWrapText(true);
                     $ptr++;
                     $cell_ptr++;
-
-
                 }
+                $border_cell = $cell_ptr - 1;
+                $sheet->getStyle('A9:AR'.$border_cell)->applyFromArray($style_border);
             });
         })->export('xls');
     }

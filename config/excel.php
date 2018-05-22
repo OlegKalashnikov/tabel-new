@@ -82,7 +82,7 @@ return array(
         |--------------------------------------------------------------------------
         */
         'pageSetup' => [
-            'orientation'           => 'portrait',
+            'orientation'           => 'landscape',
             'paperSize'             => '9',
             'scale'                 => '100',
             'fitToPage'             => false,
@@ -156,7 +156,7 @@ return array(
         | an array of columns ( array('A', 'B') )
         |
         */
-        'autosize'                    => true,
+        'autosize'                    => false,
 
         /*
         |--------------------------------------------------------------------------
