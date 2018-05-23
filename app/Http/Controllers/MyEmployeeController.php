@@ -45,7 +45,7 @@ class MyEmployeeController extends Controller
             'selectEmployees' => $selectEmployees,
             'selectDepartments' => $selectDepartments,
             'selectPositions' => $selectPositions,
-            'myEmployees' => MyEmployee::where('user_id', $user_id)->get()
+            'myEmployees' => MyEmployee::where('user_id', $user_id)->where('show', 1)->get()
         ]);
     }
 
@@ -70,7 +70,7 @@ class MyEmployeeController extends Controller
         ]);
 
         return view('my_employees.create', [
-            'myEmployees' => MyEmployee::where('user_id', $user_id)->get(),
+            'myEmployees' => MyEmployee::where('user_id', $user_id)->where('show', 1)->get(),
             'selectEmployees' => Employee::all(),
             'selectDepartments' => Department::all(),
             'selectPositions' => Position::all(),
@@ -84,7 +84,7 @@ class MyEmployeeController extends Controller
         $user_id = Auth::user()->id;
         return view('my_employees.data_medical_staff', [
             'selectDepartments' => Department::all(),
-            'myEmployees' => MyEmployee::where('user_id', $user_id)->get(),
+            'myEmployees' => MyEmployee::where('user_id', $user_id)->where('show', 1)->get(),
         ]);
     }
 
@@ -147,7 +147,7 @@ class MyEmployeeController extends Controller
         $user_id = Auth::user()->id;
         return view('my_employees.data_not_medical_staff', [
             'selectDepartments' => Department::all(),
-            'myEmployees' => MyEmployee::where('user_id', $user_id)->get(),
+            'myEmployees' => MyEmployee::where('user_id', $user_id)->where('show', 1)->get(),
         ]);
     }
 
@@ -192,7 +192,7 @@ class MyEmployeeController extends Controller
         $user_id = Auth::user()->id;
         return view('my_employees.data_individually', [
             'selectDepartments' => Department::all(),
-            'myEmployees' => MyEmployee::where('user_id', $user_id)->get(),
+            'myEmployees' => MyEmployee::where('user_id', $user_id)->where('show', 1)->get(),
         ]);
     }
 
