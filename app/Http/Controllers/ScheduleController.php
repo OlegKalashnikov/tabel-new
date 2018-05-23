@@ -18,10 +18,24 @@ class ScheduleController extends Controller
         $data_individuallies = DB::table('data_individuallies')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data_medicall_staffs = DB::table('data_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data_not_medicall_staffs = DB::table('data_not_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
+        $data = [];
+        if(isset($data_individuallies[0]->department_id)){
+            foreach($data_individuallies as $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
+        if(isset($data_medicall_staffs[0]->department_id)){
+            foreach($data_medicall_staffs as $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
+        if(isset($data_not_medicall_staffs[0]->department_id)){
+            foreach($data_not_medicall_staffs as $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
         return view('schedule.schedule', [
-            'data_individuallies' => $data_individuallies,
-            'data_medicall_staffs' => $data_medicall_staffs,
-            'data_not_medicall_staffs' => $data_not_medicall_staffs,
+            'data' => $data,
         ]);
     }
 

@@ -28,8 +28,14 @@ class MyEmployeeController extends Controller
     public function show(){
         $user_id = Auth::user()->id;
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get();
+        $last_updated_at_timetables = Timetable::where('user_id', $user_id)->orderBy('updated_at', 'desc')->limit(1)->value('updated_at');
+        if(is_null($last_updated_at_timetables) || !empty($last_updated_at_timetables)){
+            //dd($last_updated_at_timetables);
+            $show_btn_timetables = TRUE;
+        }
         return view('my_employees.my_employee', [
             'myEmployees' => $myEmployees,
+            'show_btn_timetables' => $show_btn_timetables,
         ]);
     }
 

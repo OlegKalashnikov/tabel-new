@@ -16,13 +16,39 @@ class TimetableController extends Controller
      */
     public function showList(){
         $user_id = Auth::user()->id;
+        //$data = Timetable::where('user_id', $user_id)->get()->groupBy('department_id');
         $data_individuallies = DB::table('data_individuallies')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data_medicall_staffs = DB::table('data_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data_not_medicall_staffs = DB::table('data_not_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
+        $data = [];
+        if(isset($data_individuallies[0]->department_id)){
+            foreach($data_individuallies as $key => $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
+        if(isset($data_medicall_staffs[0]->department_id)){
+            foreach($data_medicall_staffs as $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
+        if(isset($data_not_medicall_staffs[0]->department_id)){
+            foreach($data_not_medicall_staffs as $value){
+                $data[$value->department_id] = $value->month;
+            }
+        }
+//        вв()
+//        foreach($data as $key => $values){
+//            foreach($values as $j => $value){
+//                $tmp = $value;
+//                if($values[$j] != $tmp){
+//                    echo $key . ' - ' . $value . ' - '. $j .'<br>';
+//                }
+//
+//            }
+//        }
+        //dd($data);
         return view('timetable.timetable', [
-            'data_individuallies' => $data_individuallies,
-            'data_medicall_staffs' => $data_medicall_staffs,
-            'data_not_medicall_staffs' => $data_not_medicall_staffs,
+            'data' => $data,
         ]);
     }
 

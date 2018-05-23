@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class NoShows extends Model
 {
     protected $guarded = [];
-    public $timestamps = FALSE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne

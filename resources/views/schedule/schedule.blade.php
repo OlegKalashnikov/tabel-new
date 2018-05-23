@@ -30,45 +30,19 @@
                                 </tr>
                             </thead>
                             <tdoby>
-                                @if(isset($data_individuallies[0]->department_id))
-                                    @foreach($data_individuallies as $data_individually)
-                                        <tr>
-                                            <td>{{\App\Schedule::department_name($data_individually->department_id)}}</td>
-                                            <td>{{\App\Schedule::month($data_individually->month)}}</td>
-                                            <td class="text-nowrap">
-                                                <a href="{{route('schedule.show', [$data_individually->department_id, $data_individually->month])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Редактирование"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>--}}
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a>--}}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                                @if(isset($data_not_medicall_staffs[0]->department_id))
-                                    @foreach($data_not_medicall_staffs as $data_not_medicall_staff)
-                                        <tr>
-                                            <td>{{\App\Schedule::department_name($data_not_medicall_staff->department_id)}}</td>
-                                            <td>{{\App\Schedule::month($data_not_medicall_staff->month)}}</td>
-                                            <td class="text-nowrap">
-                                                <a href="{{route('schedule.show', [$data_not_medicall_staff->department_id, $data_not_medicall_staff->month])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Редактирование"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>--}}
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a>--}}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                                @if(isset($data_medicall_staffs[0]->department_id))
-                                    @foreach($data_medicall_staffs as $data_medicall_staff)
-                                        <tr>
-                                            <td>{{\App\Schedule::department_name($data_medicall_staff->department_id)}}</td>
-                                            <td>{{\App\Schedule::month($data_medicall_staff->month)}}</td>
-                                            <td class="text-nowrap">
-                                                <a href="{{route('schedule.show', [$data_medicall_staff->department_id, $data_medicall_staff->month])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Редактирование"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>--}}
-                                                {{--<a href="#" data-toggle="tooltip" data-original-title="Close"> <i class="fa fa-close text-danger"></i> </a>--}}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
+                                @forelse($data as $key => $value)
+                                    <tr>
+                                        <td>{{\App\Schedule::department_name($key)}}</td>
+                                        <td>{{\App\Schedule::month($value)}}</td>
+                                        <td class="text-nowrap">
+                                            <a href="{{route('schedule.show', [$key, $value])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3">Сформируйте табель</td>
+                                    </tr>
+                                @endforelse
                             </tdoby>
                             </thead>
                         </table>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Combination extends Model
 {
     protected $guarded = [];
-    public $timestamps = FALSE;
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
