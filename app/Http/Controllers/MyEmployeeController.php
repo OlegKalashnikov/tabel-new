@@ -27,7 +27,7 @@ class MyEmployeeController extends Controller
      */
     public function show(){
         $user_id = Auth::user()->id;
-        $myEmployees = MyEmployee::where('user_id', $user_id)->get();
+        $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get();
         return view('my_employees.my_employee', [
             'myEmployees' => $myEmployees,
         ]);
@@ -832,6 +832,13 @@ class MyEmployeeController extends Controller
             }
         }
 
+        return redirect()->route('my.employee');
+    }
+
+    public function showStatus(MyEmployee $myEmployee){
+        $myEmployee->update([
+            'show' => 0
+        ]);
         return redirect()->route('my.employee');
     }
 

@@ -44,7 +44,7 @@
                                 <th>Отдел</th>
                                 <th>Должность</th>
                                 <th>Ставка</th>
-                                {{--<th>Действия</th>--}}
+                                <th>Действия</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -54,10 +54,10 @@
                                     <td>{{$myEmployee->department->department}}</td>
                                     <td>{{$myEmployee->position->position}}</td>
                                     <td>{{$myEmployee->rate}}</td>
-                                    {{--<td class="text-nowrap">--}}
+                                    <td class="text-nowrap">
                                         {{--<a href="" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>--}}
-                                        {{--<a href="" data-toggle="tooltip" data-original-title="Delete"> <i class="fa fa-close text-danger"></i> </a>--}}
-                                    {{--</td>--}}
+                                        <a href="{{route('my.employee.show', $myEmployee)}}" data-toggle="tooltip" data-original-title="Delete"> <i class="fa fa-trash text-danger"></i> </a>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
