@@ -6,10 +6,10 @@
     <!-- ============================================================== -->
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor">Должности</h3>
+            <h3 class="text-themecolor">Нормы продолжительности рабочего дня по категориям и ставкам</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Главная</a></li>
-                <li class="breadcrumb-item active">Настройки</li>
+                <li class="breadcrumb-item active">Нормы</li>
             </ol>
         </div>
     </div>
@@ -21,26 +21,45 @@
             <div class="card">
                 <div class="card-body">
                     <div class="card-subtitle">
-                        <a href="{{route('settings.position.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая должность</a>
-                        <a href="{{route('settings.position.upload')}}" class="btn btn-outline-success"><i class="fa fa-upload"></i> Загрузка списка</a>
+                        <a href="{{route('standard.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая норма</a>
                     </div>
                     <div class="table-responsive m-t-40">
                         <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>Должность</th>
-                                <th>Категория</th>
-                                <th>Действие</th>
+                                <th></th>
+                                <th>Январь</th>
+                                <th>Февраль</th>
+                                <th>Март</th>
+                                <th>Апрель</th>
+                                <th>Май</th>
+                                <th>Июнь</th>
+                                <th>Июль</th>
+                                <th>Август</th>
+                                <th>Сентябрь</th>
+                                <th>Октябрь</th>
+                                <th>Ноябрь</th>
+                                <th>Декабрь</th>
+                                <th>За год</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($positions as $position)
+                            @foreach($standards as $standard)
                                 <tr>
-                                    <td>{{$position->position}}</td>
-                                    <td>{{$position->category->category}}</td>
-                                    <td class="text-nowrap">
-                                        <a href="{{route('settings.position.edit', $position)}}" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                    </td>
+                                    <td><a href="{{route('standard.edit', $standard)}}">{{$standard->name}}</a></td>
+                                    <td>{{$standard->january}}</td>
+                                    <td>{{$standard->february}}</td>
+                                    <td>{{$standard->march}}</td>
+                                    <td>{{$standard->april}}</td>
+                                    <td>{{$standard->may}}</td>
+                                    <td>{{$standard->june}}</td>
+                                    <td>{{$standard->july}}</td>
+                                    <td>{{$standard->august}}</td>
+                                    <td>{{$standard->september}}</td>
+                                    <td>{{$standard->october}}</td>
+                                    <td>{{$standard->november}}</td>
+                                    <td>{{$standard->december}}</td>
+                                    <td>{{$standard->year}}</td>
                                 </tr>
                             @endforeach
                             </tbody>

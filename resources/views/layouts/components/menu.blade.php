@@ -31,6 +31,8 @@
                 <li> <a class="waves-effect waves-dark" href="{{route('combination')}}" aria-expanded="false"><i class="mdi mdi-calendar-plus"></i><span class="hide-menu">Совмещения</span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('dismissal')}}" aria-expanded="false"><i class="mdi mdi-delete-forever"></i><span class="hide-menu">Увольнения</span></a></li>
                 <li class="nav-devider"></li>
+                <li> <a class="waves-effect waves-dark" href="{{route('standard')}}" aria-expanded="false"><i class="mdi mdi-archive"></i><span class="hide-menu">Нормы</span></a></li>
+                <li class="nav-devider"></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('schedule')}}" aria-expanded="false"><i class="mdi mdi-chart-bar"></i><span class="hide-menu">График</span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('timetable')}}" aria-expanded="false"><i class="mdi mdi-table-large"></i><span class="hide-menu">Табель</span></a></li>
                 <li class="nav-devider"></li>
@@ -50,6 +52,8 @@
                         <li><a href="{{route('settings.employee')}}">Сотрудники</a></li>
                         <li><a href="{{route('settings.position')}}">Должности</a></li>
                         <li><a href="{{route('settings.department')}}">Отделения</a></li>
+                        <li><a href="{{route('settings.department')}}">Отделения</a></li>
+                        <li><a href="{{route('settings.category')}}">Категории</a></li>
                     </ul>
                 </li>
                 <li><br></li>

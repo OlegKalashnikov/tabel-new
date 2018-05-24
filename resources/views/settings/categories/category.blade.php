@@ -6,7 +6,7 @@
     <!-- ============================================================== -->
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor">Должности</h3>
+            <h3 class="text-themecolor">Категория должности</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Главная</a></li>
                 <li class="breadcrumb-item active">Настройки</li>
@@ -21,25 +21,22 @@
             <div class="card">
                 <div class="card-body">
                     <div class="card-subtitle">
-                        <a href="{{route('settings.position.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая должность</a>
-                        <a href="{{route('settings.position.upload')}}" class="btn btn-outline-success"><i class="fa fa-upload"></i> Загрузка списка</a>
+                        <a href="{{route('settings.category.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая категория</a>
                     </div>
                     <div class="table-responsive m-t-40">
                         <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th>Должность</th>
                                 <th>Категория</th>
                                 <th>Действие</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($positions as $position)
+                            @foreach($categories as $category)
                                 <tr>
-                                    <td>{{$position->position}}</td>
-                                    <td>{{$position->category->category}}</td>
+                                    <td>{{$category->category}}</td>
                                     <td class="text-nowrap">
-                                        <a href="{{route('settings.position.edit', $position)}}" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                        <a href="{{route('settings.category.edit', $category)}}" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                     </td>
                                 </tr>
                             @endforeach

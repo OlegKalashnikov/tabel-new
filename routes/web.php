@@ -62,7 +62,12 @@ Route::group(['middleware' => 'auth'], function (){
     Route::patch('/settings/user/{user}/block', 'UserController@block');
     Route::get('/settings/user/{user}/changepswd', 'UserController@changepswdForm')->name('settings.user.changepswd');
     Route::patch('/settings/user/{user}/changepswd', 'UserController@changepswd');
-
+    /* Categories*/
+    Route::get('/settings/categories/', 'CategoryController@show')->name('settings.category');
+    Route::get('/settings/categories/{category}/edit', 'CategoryController@editForm')->name('settings.category.edit');
+    Route::patch('/settings/categories/{category}/update', 'CategoryController@update')->name('settings.category.update');
+    Route::get('/settings/categories/create', 'CategoryController@createForm')->name('settings.category.create');
+    Route::post('/settings/categories/store', 'CategoryController@store')->name('settings.category.store');
     /*===============================================================================================================*/
     /* My Employee*/
     Route::get('/my_employees', 'MyEmployeeController@show')->name('my.employee');
@@ -103,6 +108,13 @@ Route::group(['middleware' => 'auth'], function (){
     Route::post('/dismissal/store', 'DismissalController@store')->name('dismissal.store');
     Route::get('/dismissal/{dismissal}/edit', 'DismissalController@editForm')->name('dismissal.edit');
     Route::patch('/dismissal/{dismissal}/update', 'DismissalController@update')->name('dismissal.update');
+    /*================================================================================================================*/
+    /* Standards (Нормы)*/
+    Route::get('/standards/', 'StandardController@show')->name('standard');
+    Route::get('/standards/create', 'StandardController@createForm')->name('standard.create');
+    Route::post('/standards/store', 'StandardController@store')->name('standard.store');
+    Route::get('/standards/{standard}/edit', 'StandardController@editForm')->name('standard.edit');
+    Route::patch('/standards/{standard}/update', 'StandardController@update')->name('standard.update');
     /*================================================================================================================*/
     /* Schedule (графики)*/
     Route::get('/schedule', 'ScheduleController@showList')->name('schedule');

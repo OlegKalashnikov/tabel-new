@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Position;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -40,6 +41,7 @@ class PositionController extends Controller
             foreach ($data as $insert){
                 Position::create([
                     'position' => $insert->position,
+                    'category_id' => $insert->category_id,
                 ]);
                 $ptr++;
             }
@@ -57,6 +59,7 @@ class PositionController extends Controller
     public function editForm(Position $position){
         return view('settings.positions.edit', [
             'position' => $position,
+            'categories' => Category::all(),
         ]);
     }
 
@@ -68,6 +71,7 @@ class PositionController extends Controller
     public function update(Request $request, Position $position){
         request()->validate([
             'position' => 'required',
+            'category_id' => 'required',
         ]);
         $position->update($request->all());
         return redirect()->route('settings.position')->with([
@@ -79,7 +83,9 @@ class PositionController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function createForm(){
-        return view('settings.positions.create');
+        return view('settings.positions.create', [
+            'categories' => Category::all()
+        ]);
     }
 
     /**
@@ -89,6 +95,7 @@ class PositionController extends Controller
     public function store(Request $request){
         request()->validate([
             'position' => 'required',
+            'category_id' => 'required',
         ]);
         Position::create($request->all());
         return redirect()->route('settings.position')->with([
