@@ -20,6 +20,28 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <div class="card-subtitle">
+                        <div class="btn-group">
+                            <a href="{{route('timetable.create', $month)}}" class="btn btn-outline-success">Сформировать табель за текущий месяц</a>
+                            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{route('timetable.create', 1)}}">Сформировать табель за январь</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 2)}}">Сформировать табель за февраль</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 3)}}">Сформировать табель за март</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 4)}}">Сформировать табель за апрель</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 5)}}">Сформировать табель за май</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 6)}}">Сформировать табель за июнь</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 7)}}">Сформировать табель за июль</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 8)}}">Сформировать табель за август</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 9)}}">Сформировать табель за сентябрь</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 10)}}">Сформировать табель за октябрь</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 11)}}">Сформировать табель за ноябрь</a>
+                                <a class="dropdown-item" href="{{route('timetable.create', 12)}}">Сформировать табель за декабрь</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>

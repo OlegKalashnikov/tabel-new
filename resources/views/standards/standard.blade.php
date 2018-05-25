@@ -24,7 +24,7 @@
                         <a href="{{route('standard.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая норма</a>
                     </div>
                     <div class="table-responsive m-t-40">
-                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                        <table  class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                                 <th></th>

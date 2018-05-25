@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Combination;
+use App\MyEmployee;
 use App\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,6 +22,7 @@ class TimetableController extends Controller
         $data_medicall_staffs = DB::table('data_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data_not_medicall_staffs = DB::table('data_not_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
         $data = [];
+        $month = Carbon::now()->format('m');
         if(isset($data_individuallies[0]->department_id)){
             foreach($data_individuallies as $key => $value){
                 $data[$value->department_id] = $value->month;
@@ -49,6 +51,7 @@ class TimetableController extends Controller
         //dd($data);
         return view('timetable.timetable', [
             'data' => $data,
+            'month' => $month,
         ]);
     }
 
@@ -86,6 +89,36 @@ class TimetableController extends Controller
                 $update->update([
                     'number_of_hours' => $request->value,
                 ]);
+            }
+        }
+    }
+    
+    
+    public function storeTimetable($month){
+        $date = Carbon::create(null, $month, 01); //месяц за который формируем табель
+        $firstDay = Carbon::create(null, $month, 01)->firstOfMonth()->format('Y-m-d');
+        $endDay = Carbon::create(null, $month, 01)->lastOfMonth()->format('Y-m-d');
+        $countDay= $date->daysInMonth;
+        $monthSQL = mb_strtolower(Carbon::create(null, $month, 01)->format('M'));
+        dump($date);
+        dump($firstDay);
+        dump($endDay);
+        dump($countDay);
+        dump($monthSQL);
+        $user_id = Auth::user()->id;//id табельщика
+        $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
+        foreach($myEmployees as $myEmployee){
+            //заполняем весь месяц
+//            $number_of_hours =
+            for($ptr = 1; $ptr <= $countDay; $ptr++){
+                $timetable = new Timetable();
+                $timetable->user_id = $user_id;
+                $timetable->department_id = $myEmployee->department_id;
+                $timetable->my_employee_id = $myEmployee->my_employee_id;
+                if(!$date->isWeekend()){
+                    $timetable->date = $date->format('Y-m-d');
+                    $ti
+                }
             }
         }
     }

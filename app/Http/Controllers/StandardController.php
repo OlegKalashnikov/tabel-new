@@ -12,6 +12,8 @@ class StandardController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show(){
+        $tmp = Standard::where('name', 'like', '%Продол-ть% АХЧ')->get();
+        //dd($tmp);
         return view('standards.standard', [
             'standards' => Standard::all(),
         ]);
