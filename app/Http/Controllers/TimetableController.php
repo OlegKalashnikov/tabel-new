@@ -117,7 +117,7 @@ class TimetableController extends Controller
                 $timetable->my_employee_id = $myEmployee->my_employee_id;
                 if(!$date->isWeekend()){
                     $timetable->date = $date->format('Y-m-d');
-                    $ti
+                    //$ti
                 }
             }
         }
