@@ -27,6 +27,15 @@
             <div class="card card-body">
                 <div class="row">
                     <div class="col-sm-12 col-xs-12">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <form method="POST" action="{{route('standard.store')}}" class="form-material">
                             @csrf
                             <div class="form-group">
@@ -51,43 +60,40 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="january" value="{{ old('january') }}" placeholder="Норма в январе">
+                                <input type="text" class="form-control form-control-line" name="jan" value="{{ old('jan') }}" placeholder="Норма в январе">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="february" value="{{ old('february') }}" placeholder="Норма в феврале">
+                                <input type="text" class="form-control form-control-line" name="feb" value="{{ old('feb') }}" placeholder="Норма в феврале">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="march" value="{{ old('march') }}" placeholder="Норма в марте">
+                                <input type="text" class="form-control form-control-line" name="mar" value="{{ old('mar') }}" placeholder="Норма в марте">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="april" value="{{ old('april') }}" placeholder="Норма в апреле">
+                                <input type="text" class="form-control form-control-line" name="apr" value="{{ old('apr') }}" placeholder="Норма в апреле">
                             </div>
                             <div class="form-group">
                                 <input type="text" class="form-control form-control-line" name="may" value="{{ old('may') }}" placeholder="Норма в мае">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="june" value="{{ old('june') }}" placeholder="Норма в июне">
+                                <input type="text" class="form-control form-control-line" name="jun" value="{{ old('jun') }}" placeholder="Норма в июне">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="july" value="{{ old('july') }}" placeholder="Норма в июле">
+                                <input type="text" class="form-control form-control-line" name="jul" value="{{ old('jul') }}" placeholder="Норма в июле">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="august" value="{{ old('august') }}" placeholder="Норма в августе">
+                                <input type="text" class="form-control form-control-line" name="aug" value="{{ old('aug') }}" placeholder="Норма в августе">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="september" value="{{ old('september') }}" placeholder="Норма в сентябре">
+                                <input type="text" class="form-control form-control-line" name="sep" value="{{ old('sep') }}" placeholder="Норма в сентябре">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="october" value="{{ old('october') }}" placeholder="Норма в октябре">
+                                <input type="text" class="form-control form-control-line" name="oct" value="{{ old('oct') }}" placeholder="Норма в октябре">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="november" value="{{ old('november') }}" placeholder="Норма в ноябре">
+                                <input type="text" class="form-control form-control-line" name="nov" value="{{ old('nov') }}" placeholder="Норма в ноябре">
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="december" value="{{ old('december') }}" placeholder="Норма в декабре">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-line" name="year" value="{{ old('year') }}" placeholder="Годовая норма">
+                                <input type="text" class="form-control form-control-line" name="dec" value="{{ old('dec') }}" placeholder="Норма в декабре">
                             </div>
 
                             <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Создать</button>

@@ -24,10 +24,12 @@
                         <a href="{{route('standard.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Новая норма</a>
                     </div>
                     <div class="table-responsive m-t-40">
-                        <table  class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                        <table class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                             <tr>
                                 <th></th>
+                                <th>Категория</th>
+                                <th>Ставка</th>
                                 <th>Январь</th>
                                 <th>Февраль</th>
                                 <th>Март</th>
@@ -40,28 +42,28 @@
                                 <th>Октябрь</th>
                                 <th>Ноябрь</th>
                                 <th>Декабрь</th>
-                                <th>За год</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($standards as $standard)
-                                <tr>
-                                    <td><a href="{{route('standard.edit', $standard)}}">{{$standard->name}}</a></td>
-                                    <td>{{$standard->january}}</td>
-                                    <td>{{$standard->february}}</td>
-                                    <td>{{$standard->march}}</td>
-                                    <td>{{$standard->april}}</td>
-                                    <td>{{$standard->may}}</td>
-                                    <td>{{$standard->june}}</td>
-                                    <td>{{$standard->july}}</td>
-                                    <td>{{$standard->august}}</td>
-                                    <td>{{$standard->september}}</td>
-                                    <td>{{$standard->october}}</td>
-                                    <td>{{$standard->november}}</td>
-                                    <td>{{$standard->december}}</td>
-                                    <td>{{$standard->year}}</td>
-                                </tr>
-                            @endforeach
+                                @foreach($standards as $standard)
+                                    <tr>
+                                        <td>{{$standard->name}}</td>
+                                        <td>{{$standard->category->category}}</td>
+                                        <td>{{$standard->rate}}</td>
+                                        <td>{{$standard->jan}}</td>
+                                        <td>{{$standard->feb}}</td>
+                                        <td>{{$standard->mar}}</td>
+                                        <td>{{$standard->apr}}</td>
+                                        <td>{{$standard->may}}</td>
+                                        <td>{{$standard->jun}}</td>
+                                        <td>{{$standard->jul}}</td>
+                                        <td>{{$standard->aug}}</td>
+                                        <td>{{$standard->sep}}</td>
+                                        <td>{{$standard->oct}}</td>
+                                        <td>{{$standard->nov}}</td>
+                                        <td>{{$standard->dec}}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

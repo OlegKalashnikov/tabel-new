@@ -15,24 +15,25 @@ class CreateStandardsTable extends Migration
     {
         Schema::create('standards', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 100);
-            $table->string('january',10);
-            $table->string('february',10);
-            $table->string('march',10);
-            $table->string('april',10);
+
+            $table->string('name');
+
+            $table->string('jan',10);
+            $table->string('feb',10);
+            $table->string('mar',10);
+            $table->string('apr',10);
             $table->string('may',10);
-            $table->string('june',10);
-            $table->string('july',10);
-            $table->string('august',10);
-            $table->string('september',10);
-            $table->string('october',10);
-            $table->string('november',10);
-            $table->string('december',10);
-            $table->string('year',10);
+            $table->string('jun',10);
+            $table->string('jul',10);
+            $table->string('aug',10);
+            $table->string('sep',10);
+            $table->string('oct',10);
+            $table->string('nov',10);
+            $table->string('dec',10);
 
-            $table->unsignedInteger('rate');
+            $table->string('rate',5);
 
-            $table->unsignedInteger('category_id')->nullable();
+            $table->unsignedInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
 
             $table->timestamps();

@@ -79,9 +79,8 @@ class MyEmployee extends Model
     }
 
     public static function standard(MyEmployee $myEmployee, $month){
-        $position_id = $myEmployee->position_id;
-        $category_id = Position::where('id', $position_id)->value('category_id');
-        $tmp = Standard::where('category_id', $category_id)->where('name', 'like', 'Продол-ть%')->value('may');
+        $tmp = Standard::where('category_id', $myEmployee->category_id)->where('rate', $myEmployee->rate)->where('name', 'like', 'Продол%')->value('may');
+        //dd($tmp);
         return $tmp;
     }
 
