@@ -74,6 +74,8 @@ Route::group(['middleware' => 'auth'], function (){
     Route::get('/my_employees/create', 'MyEmployeeController@createForm')->name('my.employee.create');
     Route::post('/my_employees/store', 'MyEmployeeController@store')->name('my.employee.store');
     Route::get('/my_employees/{my_employee}/softDestroy', 'MyEmployeeController@showStatus')->name('my.employee.destroy');
+    Route::get('/my_employees/{my_employee}/edit', 'MyEmployeeController@showFormEdit')->name('my.employee.edit');
+    Route::patch('/my_employees/{my_employee}/update', 'MyEmployeeController@update')->name('my.employee.update');
     /* Формирование данных для медперсонала*/
     Route::get('/my_employees/create/medicall_staff', 'MyEmployeeController@createFormMedicallStaf')->name('my.employee.create.medicalstaff');
     Route::post('/my_employees/create/medicall_staff_create', 'MyEmployeeController@storeMedicallStaf')->name('my.employee.store.medicalstaff');

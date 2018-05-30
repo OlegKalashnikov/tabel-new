@@ -36,6 +36,7 @@ class MyEmployeeController extends Controller
         return view('my_employees.my_employee', [
             'myEmployees' => $myEmployees,
             'show_btn_timetables' => $show_btn_timetables,
+            'month' => mb_strtolower(\Illuminate\Support\Carbon::now()->format('M')),
         ]);
     }
 

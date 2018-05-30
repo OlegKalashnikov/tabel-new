@@ -74,9 +74,9 @@
                                     <td>{{$myEmployee->department->department}}</td>
                                     <td>{{$myEmployee->position->position}}</td>
                                     <td>{{$myEmployee->rate}}</td>
-                                    <td>{{\App\MyEmployee::standard($myEmployee, 05)}}</td>
+                                    <td>{{\App\MyEmployee::standard($myEmployee, $month)}}</td>
                                     <td class="text-nowrap">
-                                        {{--<a href="" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>--}}
+                                        <a href="{{route('my.employee.edit', $myEmployee)}}" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                         <a href="{{route('my.employee.destroy', $myEmployee)}}" data-toggle="tooltip" data-original-title="Delete"> <i class="fa fa-trash text-danger"></i> </a>
                                     </td>
                                 </tr>

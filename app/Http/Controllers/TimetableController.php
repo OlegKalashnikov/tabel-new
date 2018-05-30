@@ -107,6 +107,8 @@ class TimetableController extends Controller
         dump($monthSQL);
         $user_id = Auth::user()->id;//id табельщика
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
+        $timetables = Timetable::where('user_id', $user_id)->get();
+        dump($myEmployees);
         foreach($myEmployees as $myEmployee){
             //заполняем весь месяц
 //            $number_of_hours =
