@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Combination;
+use App\Holiday;
 use App\MyEmployee;
+use App\Standard;
 use App\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -106,22 +108,51 @@ class TimetableController extends Controller
         dump($countDay);
         dump($monthSQL);
         $user_id = Auth::user()->id;//id табельщика
+        dump($user_id);
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
-        $timetables = Timetable::where('user_id', $user_id)->get();
+        $timetables = Timetable::where('user_id', $user_id)->where('month', $month)->get();
+        $holidays = Holiday::where('date', '>=', $firstDay)->where('date', '<=', $endDay)->get(); //праздничные и предпраздничные дни
         dump($myEmployees);
-        foreach($myEmployees as $myEmployee){
-            //заполняем весь месяц
-//            $number_of_hours =
-            for($ptr = 1; $ptr <= $countDay; $ptr++){
+        dump($timetables);
+        dump($month);
+        dump($holidays);
+        if($timetables->isEmpty()){
+            foreach($myEmployees as $myEmployee){
                 $timetable = new Timetable();
-                $timetable->user_id = $user_id;
-                $timetable->department_id = $myEmployee->department_id;
-                $timetable->my_employee_id = $myEmployee->my_employee_id;
-                if(!$date->isWeekend()){
-                    $timetable->date = $date->format('Y-m-d');
-                    //$ti
+                $timetable->user_id = $user_id; //id табельщика
+                $timetable->department_id = $myEmployee->department_id; //id подразделения
+                $timetable->my_employee_id = $myEmployee->id; //id сотрудника табельшика
+                $timetable->month = $month; //месяц за который делается табель
+                $tmp = Standard::where('category_id', $myEmployee->category_id)->where('rate', $myEmployee->rate)->value($monthSQL);
+                $standard = explode('(', $tmp); //норма
+                if(isset($standard[1])){
+                    $standard_holiday = explode(')', $standard[1]); //если есть праздники
+                    dump($standard_holiday);
                 }
+                dump($standard);
+                $date_for = Carbon::create(null, $month, 01); //месяц за который формируем табель
+                for($ptr = 1; $ptr <= $countDay; $ptr++){//обходим весь месяц
+                    if(!$date_for->isWeekend()){
+                        $timetable->$ptr = $standard[0];
+                    }else{
+                        $timetable->$ptr = 'В';
+                    }
+                    if($holidays->isNotEmpty()){//если в текущем месяце есть праздники
+                        foreach($holidays as $holiday){
+                            if($holiday->date == $date_for->format('Y-m-d') && $holiday->type == 1){ //если предпраздничный день
+                                $timetable->$ptr = $standard_holiday[0];
+                            }elseif($holiday->date == $date_for->format('Y-m-d') && $holiday->type == 2){//если праздник
+                                $timetable->$ptr = 'П';
+                            }
+                        }
+                    }
+                    $date_for->addDay();//прибавляем день
+                }
+                $timetable->save(); //сохраняем данные в БД
             }
+
+        }else{
+            dump('No');
         }
     }
 }
