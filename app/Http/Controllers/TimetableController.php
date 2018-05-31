@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Combination;
+use App\DefaultType;
 use App\Holiday;
 use App\MyEmployee;
+use App\NoShows;
 use App\Standard;
 use App\Timetable;
 use Illuminate\Http\Request;
@@ -102,20 +104,22 @@ class TimetableController extends Controller
         $endDay = Carbon::create(null, $month, 01)->lastOfMonth()->format('Y-m-d');
         $countDay= $date->daysInMonth;
         $monthSQL = mb_strtolower(Carbon::create(null, $month, 01)->format('M'));
-        dump($date);
-        dump($firstDay);
-        dump($endDay);
-        dump($countDay);
-        dump($monthSQL);
+//        dump($date);
+//        dump($firstDay);
+//        dump($endDay);
+//        dump($countDay);
+//        dump($monthSQL);
         $user_id = Auth::user()->id;//id табельщика
-        dump($user_id);
+//        dump($user_id);
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
         $timetables = Timetable::where('user_id', $user_id)->where('month', $month)->get();
         $holidays = Holiday::where('date', '>=', $firstDay)->where('date', '<=', $endDay)->get(); //праздничные и предпраздничные дни
-        dump($myEmployees);
-        dump($timetables);
-        dump($month);
-        dump($holidays);
+        $noShows = NoShows::where('user_id', $user_id)->where('start', '<=', $endDay)->where('end', '>=', $firstDay)->get();//неявки
+//        dump($noShows);
+//        dump($myEmployees);
+//        dump($timetables);
+//        dump($month);
+//        dump($holidays);
         if($timetables->isEmpty()){
             foreach($myEmployees as $myEmployee){
                 $timetable = new Timetable();
@@ -150,7 +154,29 @@ class TimetableController extends Controller
                 }
                 $timetable->save(); //сохраняем данные в БД
             }
+            if($noShows->isNotEmpty()){
+                foreach($noShows as $noShow){
+                    if($noShow->default_type_id == 5){//командировка
+                        $tmp = Timetable::where('user_id',$user_id)->where('my_employee_id', $noShow->my_employee_id)->where('month', $month)->get();
+                        dump($tmp);
+                        $tmp_end = explode('-', $noShow->end);
+//                        dump($tmp_end);
+                        $tmp_start = explode('-', $noShow->start);
+//                        dump($tmp_start);
+                        $tmp_countDay = ($tmp_end[2]*1 - $tmp_start[2]*1)+1;
+//                        dump($tmp_countDay);
+                        $reduction = DefaultType::where('id', $noShow->default_type_id)->value('reduction');
+                        dump($reduction);
+                        foreach($tmp as $value){
+                            $value->update([
+                                $tmp_start[2] => $reduction,
+                                $tmp_end[2] => $reduction,
+                            ]);
+                        }
 
+                    }
+                }
+            }
         }else{
             dump('No');
         }
