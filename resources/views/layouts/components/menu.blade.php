@@ -27,6 +27,7 @@
             <ul id="sidebarnav">
                 <li> <a class="waves-effect waves-dark" href="{{url('/')}}" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Главная </span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('my.employee')}}" aria-expanded="false"><i class="mdi mdi-account-multiple-plus"></i><span class="hide-menu">Сотрудники</span></a></li>
+                <li> <a class="waves-effect waves-dark" href="{{route('duty.roster')}}" aria-expanded="false"><i class="mdi mdi-calendar-plus"></i><span class="hide-menu">Дежурства</span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('no.shows')}}" aria-expanded="false"><i class="mdi mdi-bullseye"></i><span class="hide-menu">Неявки</span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('combination')}}" aria-expanded="false"><i class="mdi mdi-calendar-plus"></i><span class="hide-menu">Совмещения</span></a></li>
                 <li> <a class="waves-effect waves-dark" href="{{route('dismissal')}}" aria-expanded="false"><i class="mdi mdi-delete-forever"></i><span class="hide-menu">Увольнения</span></a></li>

@@ -90,6 +90,12 @@ Route::group(['middleware' => 'auth'], function (){
     /* Сформировать табель*/
     Route::get('/my_employees/report_card', 'MyEmployeeController@storeReportCard')->name('my.employee.store.report.card');
     /*===============================================================================================================*/
+    Route::get('duty_roster', 'DutyRosterController@show')->name('duty.roster');
+    Route::get('duty_roster/create', 'DutyRosterController@createForm')->name('duty.roster.create');
+    Route::post('duty_roster/store', 'DutyRosterController@store')->name('duty.roster.store');
+    Route::get('duty_roster/{dutyRoster}/edit', 'DutyRosterController@editForm')->name('duty.roster.edit');
+    Route::patch('duty_roster/{dutyRoster}/update', 'DutyRosterController@update')->name('duty.roster.update');
+    /*===============================================================================================================*/
     /* No-shows (неявки) */
     Route::get('no-shows', 'NoShowsController@show')->name('no.shows');
     Route::get('no-shows/create', 'NoShowsController@createForm')->name('no.shows.create');
