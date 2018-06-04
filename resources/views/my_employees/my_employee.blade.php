@@ -22,18 +22,18 @@
                 <div class="card-body">
                     <div class="card-subtitle">
                         <a href="{{route('my.employee.create')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Добавить сотрудника</a>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Формирование данных
-                            </button>
-                            <div class="dropdown-menu animated flipInY">
-                                <a class="dropdown-item" href="{{route('my.employee.create.medicalstaff')}}">Для медперсонала</a>
-                                <a class="dropdown-item" href="{{route('my.employee.create.notmedicalstaff')}}">Для не медперсонала</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{route('my.employee.create.individually')}}">Отдельно по сотруднику</a>
-                            </div>
-                        </div>
-                        <a href="{{route('my.employee.store.chart')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать график</a>
+                        {{--<div class="btn-group">--}}
+                            {{--<button type="button" class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+                                {{--Формирование данных--}}
+                            {{--</button>--}}
+                            {{--<div class="dropdown-menu animated flipInY">--}}
+                                {{--<a class="dropdown-item" href="{{route('my.employee.create.medicalstaff')}}">Для медперсонала</a>--}}
+                                {{--<a class="dropdown-item" href="{{route('my.employee.create.notmedicalstaff')}}">Для не медперсонала</a>--}}
+                                {{--<div class="dropdown-divider"></div>--}}
+                                {{--<a class="dropdown-item" href="{{route('my.employee.create.individually')}}">Отдельно по сотруднику</a>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<a href="{{route('my.employee.store.chart')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать график</a>--}}
                         <div class="btn-group">
                             <a href="{{route('my.employee.store.report.card')}}" class="btn btn-outline-success">Сформировать табель за текущий месяц</a>
                             <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

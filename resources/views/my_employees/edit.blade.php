@@ -10,7 +10,7 @@
     <!-- ============================================================== -->
     <div class="row page-titles">
         <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor">Создание списка сотрудников</h3>
+            <h3 class="text-themecolor">Редактирование сотрудника</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Главная</a></li>
                 <li class="breadcrumb-item active">Настройки</li>
@@ -26,83 +26,54 @@
             <div class="card card-body">
                 <div class="row">
                     <div class="col-sm-12 col-xs-12">
-                        <form method="POST" action="{{route('my.employee.store')}}" class="form-material">
+                        <form method="POST" action="{{route('my.employee.update', $myEmployee)}}" class="form-material">
                             @csrf
+                            {{method_field('patch')}}
                             <div class="form-group">
                                 <select class="select2" name="employee_id" style="width: 100%">
-                                    <option value="">Выберите сотрудника</option>
-                                    @foreach($selectEmployees as $employee)
-                                        <option value="{{$employee->id}}">{{$employee->employee}}</option>
-                                    @endforeach
+                                    <option value="{{$myEmployee->employee_id}}" >{{$myEmployee->employee->employee}}</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <select class="select2" name="department_id" style="width: 100%">
                                     <option value="">Выберите подразделение</option>
-                                    @foreach($selectDepartments as $department)
-                                        <option value="{{$department->id}}">{{$department->department}}</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{$department->id}}" @if($department->id == $myEmployee->department_id) selected="" @endif>{{$department->department}}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
                                 <select class="select2" name="position_id" style="width: 100%">
                                     <option value="">Выберите должность</option>
-                                    @foreach($selectPositions as $position)
-                                        <option value="{{$position->id}}">{{$position->position}}</option>
+                                    @foreach($positions as $position)
+                                        <option value="{{$position->id}}" @if($position->id == $myEmployee->position_id) selected="" @endif>{{$position->position}}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
                                 <select class="select2" name="rate" style="width: 100%">
                                     <option value="">Выберите ставку</option>
-                                    <option value="1">1</option>
-                                    <option value="0.75">0.75</option>
-                                    <option value="0.5">0.5</option>
-                                    <option value="0.25">0.25</option>
+                                    <option value="1" @if($myEmployee->rate == 1) selected="" @endif>1</option>
+                                    <option value="0.75" @if($myEmployee->rate == 0.75) selected="" @endif>0.75</option>
+                                    <option value="0.5" @if($myEmployee->rate == 0.5) selected="" @endif>0.5</option>
+                                    <option value="0.25" @if($myEmployee->rate == 0.25) selected="" @endif>0.25</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <select class="select2" name="category_id" style="width: 100%">
                                     <option value="">Выберите категорию</option>
-                                    @foreach($selectCategories as $category)
-                                        <option value="{{$category->id}}">{{$category->category}}</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{$category->id}}" @if($category->id == $myEmployee->category_id) selected="" @endif>{{$category->category}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Создать</button>
+                            <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Обновить</button>
                             <a href="{{route('my.employee')}}" class="btn btn-inverse waves-effect waves-light">Назад</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card card-body">
-                <div class="table-responsive m-t-40">
-                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
-                        <thead>
-                        <tr>
-                            <th>Ф.И.О. cотрудника</th>
-                            <th>Отдел</th>
-                            <th>Должность</th>
-                            <th>Ставка</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($myEmployees as $myEmployee)
-                            <tr>
-                                <td>{{$myEmployee->employee->employee}}</td>
-                                <td>{{$myEmployee->department->department}}</td>
-                                <td>{{$myEmployee->position->position}}</td>
-                                <td>{{$myEmployee->rate}}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('page-js')
