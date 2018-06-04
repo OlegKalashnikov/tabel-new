@@ -53,13 +53,15 @@
                             </thead>
                             <tdoby>
                                 @forelse($data as $key => $value)
-                                    <tr>
-                                        <td>{{\App\Schedule::department_name($key)}}</td>
-                                        <td>{{\App\Schedule::month($value)}}</td>
-                                        <td class="text-nowrap">
-                                            <a href="{{route('timetable.show', [$key, $value])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                        </td>
-                                    </tr>
+                                    @foreach($value as $item)
+                                        <tr>
+                                            <td>{{\App\Schedule::department_name($key)}}</td>
+                                            <td>{{\App\Schedule::month($item)}}</td>
+                                            <td class="text-nowrap">
+                                                <a href="{{route('timetable.show', [$key, $item])}}" data-toggle="tooltip" data-original-title="Просмотр"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @empty
                                     <tr>
                                         <td colspan="3">Сформируйте табель</td>

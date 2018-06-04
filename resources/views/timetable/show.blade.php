@@ -58,16 +58,16 @@
                                         <td>{{\App\Schedule::schedule_my_employee_position($key)}}</td>
                                             <?php $ptr = 1;?>
                                             @foreach($data_schedules[$key] as $date => $value)
-                                                <td class="edit number_of_hours {{$date}} {{$key}}" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$value[1]}}</td>
+                                                <td class="edit number_of_hours {{$date}} {{$key}}" @if(\App\Timetable::ifWeekday($month, $ptr)) style="color: red" @endif>{{$value[0]}}</td>
                                                 <?php $ptr++;?>
                                             @endforeach
                                         <td>{{\App\Timetable::quantity($key, $department_id, $month)}}</td>
                                         <td>{{\App\Timetable::worked_out($key, $department_id, $month)}}</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                        <td>0</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td>{{\App\Timetable::combination($key, $month, 1)}}</td>
                                         <td>{{\App\Timetable::combination($key, $month, 2)}}</td>
                                         <td>{{\App\Timetable::combination($key, $month, 3)}}</td>

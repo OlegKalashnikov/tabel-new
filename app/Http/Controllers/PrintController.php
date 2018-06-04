@@ -13,8 +13,6 @@ use Maatwebsite\Excel\Facades\Excel;
 class PrintController extends Controller
 {
     public function printTimetable($department_id, $month){
-//        $user_id = Auth::user()->id;
-//        $author = User::where('id', $user_id)->value('name');
         Excel::create('Timetable', function ($excel) use($month, $department_id){
             $user_id = Auth::user()->id;
             $author = User::where('id', $user_id)->value('login');
@@ -307,9 +305,9 @@ class PrintController extends Controller
                 $coundDay = $date->daysInMonth;
                 $tmp_data = Timetable::where('user_id', $user_id)->where('department_id', $department_id)->whereBetween('date',[$date->firstOfMonth()->format('Y-m-d'), $date->lastOfMonth()->format('Y-m-d') ])->get();
                 foreach($tmp_data as $value){
-                    $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_days;
-                    $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_hours;
+                    $data_schedules[$value->my_employee_id][$value->date][] = $value->standard;
                 }
+
 
                 $style_border = array(
                     'borders' => array(
@@ -390,8 +388,10 @@ class PrintController extends Controller
                     $ptr_date = 0;
                     foreach($data_schedules[$key] as $date => $value){
                         $arr_cell = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH'];
-                        $sheet->cell("$arr_cell[$ptr_date]$cell_ptr", function ($cell) use($value){
-                            $cell->setValue("$value[1]");
+                        $sheet->cell("$arr_cell[$ptr_date]$cell_ptr", function ($cell) use($value) {
+                            foreach ($value as $item){
+                                $cell->setValue("$item");
+                            }
                         });
                         $ptr_date++;
                     }

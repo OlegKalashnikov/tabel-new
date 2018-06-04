@@ -27,7 +27,7 @@ class Timetable extends Model
                             ->where('date', '>=', $date->firstOfMonth()->format('Y-m-d'))
                             ->get();
         foreach($tmp_data as $value){
-            if(strpos($value->number_of_hours, ':')){
+            if(is_numeric($value->standard)){
                 $tmp++;
             }
         }
@@ -51,9 +51,14 @@ class Timetable extends Model
             ->where('date', '>=', $date->firstOfMonth()->format('Y-m-d'))
             ->get();
         foreach($tmp_data as $value){
-            if(strpos($value->number_of_hours, ':')){
-                $tmp_time = explode(':', $value->number_of_hours);
-                $tmp_worked_out = ($tmp_time[0]*60*60) + ($tmp_time[1]*60);
+            if(is_numeric($value->standard)){
+                $tmp_time = $value->standard[0];
+                if(isset($value->standard[1])){
+                    $a = $value->standard[1];
+                    $a .= $value->standard[2];
+                    $tmp_worked_out = (($tmp_time*1)*60*60) + (($a*1)*60);
+                }
+                $tmp_worked_out = (($tmp_time*1)*60*60);
                 $tmp += $tmp_worked_out;
             }
         }
@@ -112,5 +117,6 @@ class Timetable extends Model
             return FALSE;
         }
     }
+
 
 }

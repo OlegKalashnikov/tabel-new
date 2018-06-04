@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Combination;
 use App\DefaultType;
+use App\Dismissal;
+use App\DutyRoster;
 use App\Holiday;
 use App\MyEmployee;
 use App\NoShows;
@@ -21,38 +23,12 @@ class TimetableController extends Controller
      */
     public function showList(){
         $user_id = Auth::user()->id;
-        //$data = Timetable::where('user_id', $user_id)->get()->groupBy('department_id');
-        $data_individuallies = DB::table('data_individuallies')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
-        $data_medicall_staffs = DB::table('data_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
-        $data_not_medicall_staffs = DB::table('data_not_medicall_staffs')->select('department_id', 'month')->where('user_id', $user_id)->groupBy('department_id', 'month')->get();
-        $data = [];
         $month = Carbon::now()->format('m');
-        if(isset($data_individuallies[0]->department_id)){
-            foreach($data_individuallies as $key => $value){
-                $data[$value->department_id] = $value->month;
-            }
+        $departmentTimetable = DB::table('timetables')->groupBy('department_id', 'month')->where('user_id', $user_id)->get();
+        $data = array();
+        foreach($departmentTimetable as $value){
+            $data[$value->department_id][] = $value->month;
         }
-        if(isset($data_medicall_staffs[0]->department_id)){
-            foreach($data_medicall_staffs as $value){
-                $data[$value->department_id] = $value->month;
-            }
-        }
-        if(isset($data_not_medicall_staffs[0]->department_id)){
-            foreach($data_not_medicall_staffs as $value){
-                $data[$value->department_id] = $value->month;
-            }
-        }
-//        вв()
-//        foreach($data as $key => $values){
-//            foreach($values as $j => $value){
-//                $tmp = $value;
-//                if($values[$j] != $tmp){
-//                    echo $key . ' - ' . $value . ' - '. $j .'<br>';
-//                }
-//
-//            }
-//        }
-        //dd($data);
         return view('timetable.timetable', [
             'data' => $data,
             'month' => $month,
@@ -69,10 +45,11 @@ class TimetableController extends Controller
         $date = Carbon::create(null, $month);
         $coundDay = Carbon::create(null, $month)->daysInMonth;
         $tmp_data = Timetable::where('user_id', $user_id)->where('department_id', $department_id)->whereBetween('date',[$date->firstOfMonth()->format('Y-m-d'), $date->lastOfMonth()->format('Y-m-d') ])->get();
+        //dd($tmp_data);
         foreach($tmp_data as $value){
-            $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_days;
-            $data_schedules[$value->my_employee_id][$value->date][] = $value->number_of_hours;
+            $data_schedules[$value->my_employee_id][$value->date][] = $value->standard;
         }
+        //dd($data_schedules);
         return view('timetable.show', [
             'data_schedules' => $data_schedules,
             'department_id' => $department_id,
@@ -100,85 +77,95 @@ class TimetableController extends Controller
     
     public function storeTimetable($month){
         $date = Carbon::create(null, $month, 01); //месяц за который формируем табель
-        $firstDay = Carbon::create(null, $month, 01)->firstOfMonth()->format('Y-m-d');
-        $endDay = Carbon::create(null, $month, 01)->lastOfMonth()->format('Y-m-d');
-        $countDay= $date->daysInMonth;
-        $monthSQL = mb_strtolower(Carbon::create(null, $month, 01)->format('M'));
-//        dump($date);
-//        dump($firstDay);
-//        dump($endDay);
-//        dump($countDay);
-//        dump($monthSQL);
+        $firstDay = Carbon::create(null, $month, 01)->firstOfMonth()->format('Y-m-d');// первый день
+        $endDay = Carbon::create(null, $month, 01)->lastOfMonth()->format('Y-m-d'); //последний день
+        $countDay= $date->daysInMonth;//кол-во дней в месяце
+        $monthSQL = mb_strtolower(Carbon::create(null, $month, 01)->format('M'));// название месяца для запроса к БД по выборке нормы
         $user_id = Auth::user()->id;//id табельщика
-//        dump($user_id);
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
-        $timetables = Timetable::where('user_id', $user_id)->where('month', $month)->get();
+        $timetables = Timetable::where('user_id', $user_id)->where('month', $month)->get(); //есть ли заполненые данные в месяце за который формируем табель
         $holidays = Holiday::where('date', '>=', $firstDay)->where('date', '<=', $endDay)->get(); //праздничные и предпраздничные дни
-        $noShows = NoShows::where('user_id', $user_id)->where('start', '<=', $endDay)->where('end', '>=', $firstDay)->get();//неявки
-//        dump($noShows);
-//        dump($myEmployees);
-//        dump($timetables);
-//        dump($month);
-//        dump($holidays);
-        if($timetables->isEmpty()){
-            foreach($myEmployees as $myEmployee){
-                $timetable = new Timetable();
-                $timetable->user_id = $user_id; //id табельщика
-                $timetable->department_id = $myEmployee->department_id; //id подразделения
-                $timetable->my_employee_id = $myEmployee->id; //id сотрудника табельшика
-                $timetable->month = $month; //месяц за который делается табель
-                $tmp = Standard::where('category_id', $myEmployee->category_id)->where('rate', $myEmployee->rate)->value($monthSQL);
-                $standard = explode('(', $tmp); //норма
-                if(isset($standard[1])){
-                    $standard_holiday = explode(')', $standard[1]); //если есть праздники
-                    dump($standard_holiday);
+        if($timetables->isEmpty()){//если данных в табеле за текущий месяц нет
+            foreach($myEmployees as $myEmployee){//проходим по всем сотрудникам
+                $date_for = Carbon::create(null, $month, 01);//месяц за который формируем табель
+                $standard = explode('(', Standard::where('category_id', $myEmployee->category_id)->where('rate', $myEmployee->rate)->value($monthSQL));// формируем стандарт для сотрудника в текущем месяце
+                if(isset($standard[1])){//если есть сокращенный день или нужно выработать до нормы
+                    $holiday_standard = explode(')', $standard[1]);
                 }
-                dump($standard);
-                $date_for = Carbon::create(null, $month, 01); //месяц за который формируем табель
-                for($ptr = 1; $ptr <= $countDay; $ptr++){//обходим весь месяц
-                    if(!$date_for->isWeekend()){
-                        $timetable->$ptr = $standard[0];
-                    }else{
-                        $timetable->$ptr = 'В';
-                    }
-                    if($holidays->isNotEmpty()){//если в текущем месяце есть праздники
-                        foreach($holidays as $holiday){
-                            if($holiday->date == $date_for->format('Y-m-d') && $holiday->type == 1){ //если предпраздничный день
-                                $timetable->$ptr = $standard_holiday[0];
-                            }elseif($holiday->date == $date_for->format('Y-m-d') && $holiday->type == 2){//если праздник
-                                $timetable->$ptr = 'П';
+                for($ptr = 1; $ptr <= $countDay; $ptr++){//обходим месяц
+                    $store = new Timetable();//создаем объект
+                    $store->user_id = $user_id; //табельщик
+                    $store->department_id = $myEmployee->department_id; //подразделение
+                    $store->my_employee_id = $myEmployee->id; //сотрудник
+                    $store->month = $month; //месяц
+                    if($myEmployee->category_id == 10 || $myEmployee->category_id == 11){ //6 дневная рабочая неделя
+                        if(!$date_for->isSunday()){ //если не воскресенье
+                            $store->date = $date_for->format('Y-m-d');
+                            $store->standard = $standard[0];
+                        }else{ // воскресенье
+                            $store->date = $date_for->format('Y-m-d');
+                            $store->standard = 'В';
+                        }
+                        $store->save(); //сохраняем
+                    }else{//5 дневная рабочая неделя
+                        if(!$date_for->isWeekend()){//если не выходные
+                            $store->date = $date_for->format('Y-m-d');
+                            $store->standard = $standard[0];
+                        }else{//если выходные
+                            $store->date = $date_for->format('Y-m-d');
+                            $store->standard = 'В';
+                        }
+                        if($holidays->isNotEmpty()){//если есть праздники и сокращенные дни
+                            foreach($holidays as $holiday){
+                                if($holiday->type == 1 && $holiday->date == $date_for->format('Y-m-d')){//предпраздничный
+                                    $store->date = $date_for->format('Y-m-d');
+                                    $store->standard = $holiday_standard[0];
+                                }elseif($holiday->type == 2 && $holiday->date == $date_for->format('Y-m-d')){ //праздник
+                                    $store->date = $date_for->format('Y-m-d');
+                                    $store->standard = 'П';
+                                }
                             }
                         }
+                        $store->save();
                     }
-                    $date_for->addDay();//прибавляем день
+                    $date_for->addDay();
                 }
-                $timetable->save(); //сохраняем данные в БД
-            }
-            if($noShows->isNotEmpty()){
-                foreach($noShows as $noShow){
-                    if($noShow->default_type_id == 5){//командировка
-                        $tmp = Timetable::where('user_id',$user_id)->where('my_employee_id', $noShow->my_employee_id)->where('month', $month)->get();
-                        dump($tmp);
-                        $tmp_end = explode('-', $noShow->end);
-//                        dump($tmp_end);
-                        $tmp_start = explode('-', $noShow->start);
-//                        dump($tmp_start);
-                        $tmp_countDay = ($tmp_end[2]*1 - $tmp_start[2]*1)+1;
-//                        dump($tmp_countDay);
-                        $reduction = DefaultType::where('id', $noShow->default_type_id)->value('reduction');
-                        dump($reduction);
-                        foreach($tmp as $value){
-                            $value->update([
-                                $tmp_start[2] => $reduction,
-                                $tmp_end[2] => $reduction,
-                            ]);
+                $noShows = NoShows::where('user_id', $user_id)->where('start', '<=', $endDay)->where('end', '>=', $firstDay)->where('my_employee_id', $myEmployee->id)->orderBy('default_type_id', 'decs')->get();//неявки
+                if($noShows->isNotEmpty()){//если у текущего сотрудника есть неявки в этом месяце
+                    foreach($noShows as $noShow){
+                        $updateNoShowsTimetables = Timetable::where('user_id', $user_id)->where('my_employee_id', $noShow->my_employee_id)->where('date', '>=', $noShow->start)->where('date', '<=', $noShow->end)->get();//записи в табеле за период неявки
+                        foreach($updateNoShowsTimetables as $store){
+                            $store->standard = $noShow->defaulttype->reduction;
+                            $store->save();
                         }
-
+                    }
+                }
+                $dutyRosters = DutyRoster::where('user_id', $user_id)->where('date', '>=', $firstDay)->where('date', '<=', $endDay)->where('my_employee_id', $myEmployee->id)->get();
+                if($dutyRosters->isNotEmpty()){
+                    foreach($dutyRosters as $dutyRoster){
+                        $updateDutyTimetables = Timetable::where('user_id', $user_id)->where('my_employee_id', $dutyRoster->my_employee_id)->where('date', $dutyRoster->date)->get();
+                        foreach($updateDutyTimetables as $store){
+                            $store->standard = $dutyRoster->time;
+                            $store->save();
+                        }
+                    }
+                }
+                $dismissals = Dismissal::where('user_id', $user_id)->where('my_employee_id', $myEmployee->id)->where('date', '>=', $firstDay)->where('date', '<=', $endDay)->get(); //если сотрудник уволен
+                if($dismissals->isNotEmpty()){//если существует запись
+                    foreach($dismissals as $dismissal){
+                        $updateDismissalsTimetables = Timetable::where('user_id', $user_id)->where('my_employee_id', $noShow->my_employee_id)->where('date', '>=', $dismissal->date)->get();
+                        foreach($updateDismissalsTimetables as $store){
+                            $store->standard = 'Уволен';
+                            $store->save();
+                        }
+                        $myEmployee->show = 0;//убираем со списка активный сотрудников текущего табьельщика
+                        $myEmployee->save();
                     }
                 }
             }
         }else{
-            dump('No');
+            dump('NotEmpty');
         }
+        return redirect()->route('timetable');
     }
 }

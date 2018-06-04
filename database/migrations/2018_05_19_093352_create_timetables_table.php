@@ -26,7 +26,7 @@ class CreateTimetablesTable extends Migration
             $table->foreign('my_employee_id')->references('id')->on('my_employees');
 
             $table->date('date');
-
+            $table->string('standard', 15);
             $table->string('month', 10);
             $table->timestamps();
         });
