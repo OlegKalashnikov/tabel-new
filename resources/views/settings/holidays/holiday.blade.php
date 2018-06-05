@@ -29,6 +29,7 @@
                                 <tr>
                                     <th>Тип дня</th>
                                     <th>Дата</th>
+                                    <th>Учитывать при 6 дневной рабочей недели</th>
                                     <th>Действие</th>
                                 </tr>
                             </thead>
@@ -37,6 +38,13 @@
                                     <tr>
                                         <td>{{\App\Holiday::type($holiday->type)}}</td>
                                         <td>{{$holiday->date}}</td>
+                                        <td>
+                                            @if($holiday->sixday)
+                                                Да
+                                            @else
+                                                Нет
+                                            @endif
+                                        </td>
                                         <td class="text-nowrap">
                                             <a href="{{route('settings.holiday.edit', $holiday)}}" data-toggle="tooltip" data-original-title="Edit"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                             <a href="{{route('settings.holiday.destroy', $holiday)}}" data-toggle="tooltip" data-original-title="Delete"> <i class="fa fa-close text-danger"></i> </a>

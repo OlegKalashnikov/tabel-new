@@ -63,10 +63,10 @@
                                             @endforeach
                                         <td>{{\App\Timetable::quantity($key, $department_id, $month)}}</td>
                                         <td>{{\App\Timetable::worked_out($key, $department_id, $month)}}</td>
+                                        <td>{{\App\Timetable::duty($key, $month, 1)}}</td>
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{\App\Timetable::duty($key, $month, 2)}}</td>
+                                        <td>{{\App\Timetable::duty($key, $month, 3)}}</td>
                                         <td></td>
                                         <td>{{\App\Timetable::combination($key, $month, 1)}}</td>
                                         <td>{{\App\Timetable::combination($key, $month, 2)}}</td>

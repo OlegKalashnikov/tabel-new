@@ -118,5 +118,21 @@ class Timetable extends Model
         }
     }
 
+    public static function duty($my_employee_id, $month, $type){
+        $user_id = Auth::user()->id;
+        $firstDay = Carbon::create(null,$month,01)->firstOfMonth()->format('Y-m-d');
+        $lastDay = Carbon::create(null,$month,01)->lastOfMonth()->format('Y-m-d');
+        $count = DutyRoster::where('user_id', $user_id)->where('my_employee_id', $my_employee_id)->whereBetween('date', [$firstDay, $lastDay])->where('type', $type)->get();
+        $time = 0;
+        foreach($count as $value){
+            $time += $value->time*1;
+        }
+        if($time == 0){
+            return '';
+        }else{
+            return $time;
+        }
+
+    }
 
 }

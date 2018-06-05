@@ -84,7 +84,9 @@ class TimetableController extends Controller
         $user_id = Auth::user()->id;//id табельщика
         $myEmployees = MyEmployee::where('user_id', $user_id)->where('show', 1)->get(); //все активные сотрудники у табельщика
         $timetables = Timetable::where('user_id', $user_id)->where('month', $month)->get(); //есть ли заполненые данные в месяце за который формируем табель
-        $holidays = Holiday::where('date', '>=', $firstDay)->where('date', '<=', $endDay)->get(); //праздничные и предпраздничные дни
+        $holidays = Holiday::where('date', '>=', $firstDay)->where('date', '<=', $endDay)->orderBy('type', 'asc')->get(); //праздничные и предпраздничные дни
+        $narrowSpecialistsId = [17, 18, 48, 15, 30, 14, 27, 215, 31, 38, 39, ]; //список должностей узких специалистов
+        $lastSaturday = new Carbon('last saturday of '. $date); //последняя суббота месяца
         if($timetables->isEmpty()){//если данных в табеле за текущий месяц нет
             foreach($myEmployees as $myEmployee){//проходим по всем сотрудникам
                 $date_for = Carbon::create(null, $month, 01);//месяц за который формируем табель
@@ -105,6 +107,17 @@ class TimetableController extends Controller
                         }else{ // воскресенье
                             $store->date = $date_for->format('Y-m-d');
                             $store->standard = 'В';
+                        }
+                        if($holidays->isNotEmpty()){//если есть праздники и сокращенные дни
+                            foreach($holidays as $holiday){
+                                if($holiday->type == 1 && $holiday->date == $date_for->format('Y-m-d') && $holiday->sixday){//предпраздничный
+                                    $store->date = $date_for->format('Y-m-d');
+                                    $store->standard = $holiday_standard[0];
+                                }elseif($holiday->type == 2 && $holiday->date == $date_for->format('Y-m-d') && $holiday->sixday){ //праздник
+                                    $store->date = $date_for->format('Y-m-d');
+                                    $store->standard = 'П';
+                                }
+                            }
                         }
                         $store->save(); //сохраняем
                     }else{//5 дневная рабочая неделя
@@ -129,6 +142,20 @@ class TimetableController extends Controller
                         $store->save();
                     }
                     $date_for->addDay();
+                }
+                /*последняя суббота для узких специалистов*/
+                if(array_search($myEmployee->position_id, $narrowSpecialistsId)){
+//                    dump($lastSaturday->format('Y-m-d'));
+//                    dump($user_id);
+//                    dump($myEmployee->id);
+                    $employeeTimetable = Timetable::where('user_id', $user_id)->where('my_employee_id', $myEmployee->id)->where('date', $lastSaturday->format('Y-m-d'))->get();
+//                    dump($employeeTimetable);
+                    if($holidays->isEmpty()){
+                        $employeeTimetable[0]->standard = $holiday_standard[0];
+                    }else{
+                        $employeeTimetable[0]->standard = $standard[0];
+                    }
+                    $employeeTimetable[0]->save();
                 }
                 $noShows = NoShows::where('user_id', $user_id)->where('start', '<=', $endDay)->where('end', '>=', $firstDay)->where('my_employee_id', $myEmployee->id)->orderBy('default_type_id', 'decs')->get();//неявки
                 if($noShows->isNotEmpty()){//если у текущего сотрудника есть неявки в этом месяце
@@ -166,6 +193,6 @@ class TimetableController extends Controller
         }else{
             dump('NotEmpty');
         }
-        return redirect()->route('timetable');
+        //return redirect()->route('timetable');
     }
 }

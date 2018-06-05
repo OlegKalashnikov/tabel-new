@@ -43,6 +43,13 @@
                             <div class="form-group">
                                 <input type="text" name="date" class="form-control" placeholder="Выберите день" value="{{$holiday->date}}" id="mdate">
                             </div>
+                            <div class="form-group">
+                                <select name="sixday" class="form-control">
+                                    <option value="">Учитывать при 6-ти дневной рабочей недели</option>
+                                    <option value="0" @if(!$holiday->sixday) selected @endif>Нет</option>
+                                    <option value="1" @if($holiday->sixday) selected @endif>Да</option>
+                                </select>
+                            </div>
                             <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Обновить</button>
                             <a href="{{route('settings.holiday')}}" class="btn btn-inverse waves-effect waves-light">Назад</a>
                         </form>

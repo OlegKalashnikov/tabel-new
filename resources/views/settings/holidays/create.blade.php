@@ -40,8 +40,14 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                {{--<label>Выберите день</label>--}}
                                 <input type="text" name="date" class="form-control" placeholder="Выберите день" id="mdate">
+                            </div>
+                            <div class="form-group">
+                                <select name="sixday" class="form-control">
+                                    <option value="">Учитывать при 6-ти дневной рабочей недели</option>
+                                    <option value="0">Нет</option>
+                                    <option value="1">Да</option>
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Создать</button>
                             <a href="{{route('settings.holiday')}}" class="btn btn-inverse waves-effect waves-light">Назад</a>

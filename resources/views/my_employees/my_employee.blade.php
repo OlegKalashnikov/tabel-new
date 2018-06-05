@@ -34,26 +34,26 @@
                             {{--</div>--}}
                         {{--</div>--}}
                         {{--<a href="{{route('my.employee.store.chart')}}" class="btn btn-outline-success"><i class="fa fa-plus"></i> Сформировать график</a>--}}
-                        <div class="btn-group">
-                            <a href="{{route('my.employee.store.report.card')}}" class="btn btn-outline-success">Сформировать табель за текущий месяц</a>
-                            <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Сформировать табель за январь</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за февраль</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за март</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за апрель</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за май</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за июнь</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за июль</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за август</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за сентябрь</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за октябрь</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за ноябрь</a>
-                                <a class="dropdown-item" href="#">Сформировать табель за декабрь</a>
-                            </div>
-                        </div>
+                        {{--<div class="btn-group">--}}
+                            {{--<a href="{{route('my.employee.store.report.card')}}" class="btn btn-outline-success">Сформировать табель за текущий месяц</a>--}}
+                            {{--<button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">--}}
+                                {{--<span class="sr-only">Toggle Dropdown</span>--}}
+                            {{--</button>--}}
+                            {{--<div class="dropdown-menu">--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за январь</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за февраль</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за март</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за апрель</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за май</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за июнь</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за июль</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за август</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за сентябрь</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за октябрь</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за ноябрь</a>--}}
+                                {{--<a class="dropdown-item" href="#">Сформировать табель за декабрь</a>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
                     </div>
                     <div class="table-responsive m-t-40">
                         <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
